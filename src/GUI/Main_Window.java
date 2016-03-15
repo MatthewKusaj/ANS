@@ -26,10 +26,7 @@ public class Main_Window extends Window{
     private JPanel eastPanel;
     private JPanel southPanel;
     
-    private JLabel filler;
-    
-    private JButton newBuyerAgent;
-    private JButton newSellerAgent;
+    private JButton newAgent;
     private JButton editAgent;
     private JButton deleteAgent;
 
@@ -39,15 +36,15 @@ public class Main_Window extends Window{
     public Main_Window(String tit, int width, int height)
 	{
 		super(tit, width, height);
-		initiWidgets();
+		new JADE_Backbone();
+                initiWidgets();
 		setFrameOptions();
-                new JADE_Backbone();
+                
 	}
     private void initiWidgets(){
         // Create panel for widgets and layout
 		getWindow().setResizable(false);
 		getWindow().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-                filler = new JLabel("");
                 
 		westPanel = new JPanel(new FlowLayout());
                 buyerAgentsList = new JList<String>();
@@ -59,10 +56,8 @@ public class Main_Window extends Window{
                 eastPanel.add(sellerAgentsList);
                 
                 southPanel = new JPanel(new FlowLayout());
-                newBuyerAgent = new JButton("New Buyer");
-                southPanel.add(newBuyerAgent);
-                newSellerAgent = new JButton("New Seller");
-                southPanel.add(newSellerAgent);
+                newAgent = new JButton("Create Agent");
+                southPanel.add(newAgent);
                 editAgent = new JButton("Edit Agent");
                 southPanel.add(editAgent);
                 deleteAgent = new JButton("Delete Agent");
