@@ -10,7 +10,6 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.WindowConstants;
@@ -70,11 +69,14 @@ public class Main_Window extends Window{
                 mainPanel.add(eastPanel, BorderLayout.EAST);
                 mainPanel.add(southPanel, BorderLayout.SOUTH);
                 getWindow().add(mainPanel);
-		setFrameOptions();
+                
+		newAgent.addActionListener(this);
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+        if(e.getSource().equals(newAgent)){
+            new AgentCreationWindow("Create New Agent", 200, 100);
+        }
     }
     
     public static void main(String args[])
