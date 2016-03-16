@@ -32,15 +32,15 @@ public class JADE_Backbone extends Agent{
     }
         public void startRMA(){
             Runtime myRuntime = Runtime.instance();
-        Profile myProfile = new ProfileImpl();
-        mainContainer = myRuntime.createMainContainer(myProfile);
-        // .. load a container into the above variable ..
+            Profile myProfile = new ProfileImpl();
+            mainContainer = myRuntime.createMainContainer(myProfile);
+            // .. load a container into the above variable ..
 
-        try {
-            AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", null);
-            rma.start();
-            } catch(StaleProxyException e) {
-            }
+            try {
+                AgentController rma = mainContainer.createNewAgent("rma", "jade.tools.rma.rma", null);
+                rma.start();
+                } catch(StaleProxyException e) {
+                    }
         }
     /**
      *
