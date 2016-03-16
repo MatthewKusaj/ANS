@@ -35,10 +35,8 @@ public class Main_Window extends Window{
     public Main_Window(String tit, int width, int height)
 	{
 		super(tit, width, height);
-		new JADE_Backbone();
+		JADE_Backbone.getInstance().startRMA();
                 initiWidgets();
-		setFrameOptions();
-                
 	}
     private void initiWidgets(){
         // Create panel for widgets and layout
@@ -71,6 +69,7 @@ public class Main_Window extends Window{
                 getWindow().add(mainPanel);
                 
 		newAgent.addActionListener(this);
+                setFrameOptions();
     }
     @Override
     public void actionPerformed(ActionEvent e) {

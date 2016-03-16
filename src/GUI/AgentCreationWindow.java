@@ -6,12 +6,6 @@
 package GUI;
 
 import Agent_Management.JADE_Backbone;
-import jade.wrapper.StaleProxyException;
-import jade.core.Runtime;
-import jade.core.AID;
-import jade.core.Profile;
-import jade.core.ProfileImpl;
-import jade.wrapper.AgentContainer;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
@@ -28,6 +22,9 @@ import javax.swing.WindowConstants;
  * @author Matthew
  */
 public class AgentCreationWindow extends Window{
+   
+    ContainerController myContainer;
+    public  String SECONDARY_PROPERTIES_FILE = "cfg/containerServer.cfg"; 
     
     private String agentName;
     
@@ -43,7 +40,6 @@ public class AgentCreationWindow extends Window{
 	{
 		super(tit, width, height);
                 initiWidgets();
-                setFrameOptions();
         }
     private void initiWidgets(){
         // Create panel for widgets and layout
@@ -66,34 +62,18 @@ public class AgentCreationWindow extends Window{
                 getWindow().add(panel);
                 
                 accept.addActionListener(this);
+                setFrameOptions();
     }
-
+    
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equals(accept)){
-            
-            agentName = new String(nameText.getText());
-            try {
-            // get a JADE runtime
-            Runtime rt = Runtime.instance();
-            // create a default profile
-            Profile p = new ProfileImpl();
-            // create the Main-container
-            ContainerController mainContainer = rt.createMainContainer(p);
-            //AgentContainer ac =(AgentContainer) mainContainer.getClient();
-            // create agent
-            AgentController ac = mainContainer.createNewAgent(agentName, "jade.core.Agent", null); 
-            // start the agent
-            System.out.println("Starting Agent with a name " + agentName );
-            ac.start();
-            } catch (jade.wrapper.StaleProxyException e1) {
-            System.err.println("Error launching agent...");
-                }
-            AID id = new AID(agentName, AID.ISLOCALNAME);
-            
-            }
-            
+        if(e.getSource().equals(accept)){        
+            agentName = nameText.getText();
+		try{
+                    myContainer = JADE_Backbone.getInstance().getMainContainer();
+                    AgentController ac = myContainer.createNewAgent(agentName, "jade.core.Agent", null);
+                    }   catch(Exception ex) {
+		}
         }
-    
-    
+    }       
 }
