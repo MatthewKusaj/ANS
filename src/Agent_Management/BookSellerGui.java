@@ -54,11 +54,11 @@ class BookSellerGui extends JFrame {
 		
 		// Make the agent terminate when the user closes 
 		// the GUI using the button on the upper right corner	
-		addWindowListener(new	WindowAdapter() {
-			public void windowClosing(WindowEvent e) {
-				myAgent.doDelete();
-			}
-		} );
+		//addWindowListener(new	WindowAdapter() {
+			//public void windowClosing(WindowEvent e) {
+			//	myAgent.doDelete();
+			//}
+		//} );
 		
 		setResizable(false);
 	}

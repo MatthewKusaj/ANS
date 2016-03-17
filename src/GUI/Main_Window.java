@@ -94,10 +94,10 @@ public class Main_Window extends Window{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(newBuyerAgent)){
-            new CreateBuyerAgentWindow("Create New Buyer Agent", 500, 100);
+            new CreateBuyerAgentWindow("Create New Buyer Agent", 500, 150);
         }
         if(e.getSource().equals(newSellerAgent)){
-            new CreateSellerAgentWindow("Create New Seller Agent", 500, 100);
+            new CreateSellerAgentWindow("Create New Seller Agent", 800, 800);
         }
     }
     
