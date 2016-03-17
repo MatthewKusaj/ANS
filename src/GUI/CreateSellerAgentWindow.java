@@ -76,6 +76,7 @@ public class CreateSellerAgentWindow extends Window{
                     AgentController ac = myContainer.createNewAgent(agentName, "jade.core.Agent", null);
                     }   catch(Exception ex) {
 		}
+            Main_Window.sellerAgentsListModel.addElement(agentName);
         }
     }       
 }

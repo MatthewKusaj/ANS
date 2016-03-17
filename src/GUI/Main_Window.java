@@ -10,8 +10,10 @@ import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JList;
 import javax.swing.JPanel;
+import javax.swing.DefaultListModel;
 import javax.swing.WindowConstants;
 
 /**
@@ -25,13 +27,17 @@ public class Main_Window extends Window{
     private JPanel eastPanel;
     private JPanel southPanel;
     
+    private JLabel fillerLabel;
+    private JButton runSimulation;
     private JButton newBuyerAgent;
     private JButton newSellerAgent;
     private JButton editAgent;
     private JButton deleteAgent;
 
     private JList<String> buyerAgentsList;
-    private JList sellerAgentsList;
+    public static DefaultListModel buyerAgentsListModel;
+    private JList<String> sellerAgentsList;
+    public static DefaultListModel sellerAgentsListModel;
     
     public Main_Window(String tit, int width, int height)
 	{
@@ -45,15 +51,19 @@ public class Main_Window extends Window{
 		getWindow().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 
 		westPanel = new JPanel(new FlowLayout());
-                buyerAgentsList = new JList<String>();
+                buyerAgentsList = new JList<>();
                 westPanel.add(buyerAgentsList);
                 
                 
                 eastPanel = new JPanel(new FlowLayout());
-                sellerAgentsList = new JList<String>();
+                sellerAgentsList = new JList<>();
                 eastPanel.add(sellerAgentsList);
                 
                 southPanel = new JPanel(new FlowLayout());
+                runSimulation = new JButton("Run Simulation");
+                southPanel.add(runSimulation);
+                fillerLabel = new JLabel("        ");
+                southPanel.add(fillerLabel);
                 newBuyerAgent = new JButton("Create Buyer Agent");
                 southPanel.add(newBuyerAgent);
                 newSellerAgent = new JButton("Create Seller Agent");
@@ -73,6 +83,12 @@ public class Main_Window extends Window{
                 
 		newBuyerAgent.addActionListener(this);
                 newSellerAgent.addActionListener(this);
+                
+                buyerAgentsListModel = new DefaultListModel();
+                buyerAgentsList.setModel(buyerAgentsListModel);
+                
+                sellerAgentsListModel = new DefaultListModel();
+                sellerAgentsList.setModel(sellerAgentsListModel);
                 setFrameOptions();
     }
     @Override
