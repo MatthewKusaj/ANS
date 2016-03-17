@@ -6,16 +6,18 @@
 package GUI;
 
 import Agent_Management.ContainersManager;
+import static jade.tools.sniffer.Agent.i;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
-import javax.swing.WindowConstants;
 
 /**
  *
@@ -35,6 +37,8 @@ public class CreateBuyerAgentWindow extends Window{
     private JLabel nameLabel;
     private JTextField nameText;
     private JButton accept;
+    
+    private Object[] args;
     
     public CreateBuyerAgentWindow (String tit, int width, int height)
 	{
@@ -68,12 +72,15 @@ public class CreateBuyerAgentWindow extends Window{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(accept)){        
             agentName = nameText.getText();
+            args = new Object[1];
+            args[0] = "SpecialBook/500";
 		try{
                     if(!ContainersManager.getInstance().buyerContainerExists()){
                         ContainersManager.getInstance().createBuyerContainer();
                     }
                     myContainer = ContainersManager.getInstance().getBuyerContainer();
-                    AgentController ac = myContainer.createNewAgent(agentName, "jade.core.Agent", null);
+                    AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.BuyerAgent", args);
+                    ac.start();
                     }   catch(Exception ex) {
 		}
         Main_Window.buyerAgentsListModel.addElement(agentName);        

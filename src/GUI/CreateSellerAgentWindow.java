@@ -36,6 +36,8 @@ public class CreateSellerAgentWindow extends Window{
     private JTextField nameText;
     private JButton accept;
     
+    private Object[] args;
+    
     public CreateSellerAgentWindow (String tit, int width, int height)
 	{
 		super(tit, width, height);
@@ -68,12 +70,15 @@ public class CreateSellerAgentWindow extends Window{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(accept)){        
             agentName = nameText.getText();
+            args = new Object[1];
+            args[0] = "100";
 		try{
                     if(!ContainersManager.getInstance().sellerContainerExists()){
                         ContainersManager.getInstance().createSellerContainer();
                     }
                     myContainer = ContainersManager.getInstance().getSellerContainer();
-                    AgentController ac = myContainer.createNewAgent(agentName, "jade.core.Agent", null);
+                    AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.SellerAgent", args);
+                    ac.start();
                     }   catch(Exception ex) {
 		}
             Main_Window.sellerAgentsListModel.addElement(agentName);
