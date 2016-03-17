@@ -11,8 +11,10 @@ import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import javax.swing.DefaultListModel;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JList;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 /**
@@ -22,7 +24,7 @@ import javax.swing.JTextField;
 public class CreateSellerAgentWindow extends Window{
    
     ContainerController myContainer;
-    public  String SECONDARY_PROPERTIES_FILE = "cfg/containerServer.cfg"; 
+    //public  String SECONDARY_PROPERTIES_FILE = "cfg/containerServer.cfg"; 
     
     private String agentName;
     private String loweringValue;
@@ -38,6 +40,7 @@ public class CreateSellerAgentWindow extends Window{
     private JPanel panelListButtons;
     private JPanel panelNegotiationStrategy;
     
+    private JLabel fillerLabel;
     private JLabel nameLabel;
     private JLabel listOfItemsLabel;
     private JLabel nameItemLabel;
@@ -54,6 +57,14 @@ public class CreateSellerAgentWindow extends Window{
     private JButton acceptButton;
     private JButton cancelButton;
     
+    private JList<String> nameOfItemsList;
+    private DefaultListModel nameOfItemsModel;
+    private JList<String> utilityOfItemsList;
+    private DefaultListModel utilityOfItemsModel;
+    private JList<String> valueOfItemsList;
+    private DefaultListModel valueOfItemsModel;
+    
+    
     private Object[] args;
     
     public CreateSellerAgentWindow (String tit, int width, int height)
@@ -68,7 +79,7 @@ public class CreateSellerAgentWindow extends Window{
                 panelName = new JPanel(new FlowLayout());
                 nameLabel = new JLabel("Agent Name");
                 panelName.add(nameLabel);
-                nameText = new JTextField("Seller Agent");
+                nameText = new JTextField(20);
                 panelName.add(nameText);
                 
                 panelSettings = new JPanel(new BorderLayout());
@@ -91,21 +102,36 @@ public class CreateSellerAgentWindow extends Window{
                 
                 nameItemLabel = new JLabel("Name");
                 panelColumnNames.add(nameItemLabel);
+                fillerLabel = new JLabel("          ");
+                panelColumnNames.add(fillerLabel);
                 utilityItemLabel = new JLabel("Utility");
                 panelColumnNames.add(utilityItemLabel);
-                valueItemLabel = new JLabel("value");
+                fillerLabel = new JLabel("          ");
+                panelColumnNames.add(fillerLabel);
+                valueItemLabel = new JLabel("Value");
                 panelColumnNames.add(valueItemLabel);
+                
+                nameOfItemsList = new JList<>();
+                panelLists.add(nameOfItemsList, BorderLayout.WEST);
+                utilityOfItemsList = new JList<>();
+                panelLists.add(utilityOfItemsList, BorderLayout.CENTER);
+                valueOfItemsList = new JList<>();
+                panelLists.add(valueOfItemsList, BorderLayout.EAST);
                 
                 addItemButton = new JButton("Add Item");
                 panelListButtons.add(addItemButton);
+                fillerLabel = new JLabel("          ");
+                panelListButtons.add(fillerLabel);
                 editItemButton = new JButton("Edit Item");
                 panelListButtons.add(editItemButton);
+                fillerLabel = new JLabel("          ");
+                panelListButtons.add(fillerLabel);
                 deleteItemButton = new JButton("Delete Item");
                 panelListButtons.add(deleteItemButton);
                 
                 negotiationStrategyLabel = new JLabel("Negotiation Strategy");
                 panelNegotiationStrategy.add(negotiationStrategyLabel, BorderLayout.NORTH);
-                loweringValueText = new JTextField("100");
+                loweringValueText = new JTextField(20);
                 panelNegotiationStrategy.add(loweringValueText, BorderLayout.SOUTH);
                 
                 panelButtons = new JPanel(new FlowLayout());
@@ -121,12 +147,22 @@ public class CreateSellerAgentWindow extends Window{
                 getWindow().add(panel);
                 
                 acceptButton.addActionListener(this);
+                addItemButton.addActionListener(this);
+                
+                nameOfItemsModel = new DefaultListModel();
+                nameOfItemsList.setModel(nameOfItemsModel);
+                utilityOfItemsModel = new DefaultListModel();
+                utilityOfItemsList.setModel(utilityOfItemsModel);
+                valueOfItemsModel = new DefaultListModel();
+                valueOfItemsList.setModel(valueOfItemsModel);
+                
                 setFrameOptions();
     }
     
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equals(acceptButton)){        
+        if(e.getSource().equals(addItemButton)){
+            
             agentName = nameText.getText();
             loweringValue = loweringValueText.getText();
             args = new Object[1];
@@ -140,6 +176,9 @@ public class CreateSellerAgentWindow extends Window{
                     ac.start();
                     }   catch(Exception ex) {
 		}
+        }
+        if(e.getSource().equals(acceptButton)){        
+            
             Main_Window.sellerAgentsListModel.addElement(agentName);
         }
     }       

@@ -5,6 +5,7 @@
  */
 package GUI;
 
+import Agent_Management.SellerAgent;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.Frame;
@@ -54,6 +55,12 @@ public abstract class Window implements ActionListener{
 		window.setVisible(true);
 
 	}
+        public Window(String tit, int width, int heright, SellerAgent a){
+            title = tit;
+		this.width = width;
+		this.height = height;
+		window = new JFrame(title);
+        }
 	/**
 	 * Set small frame options to make layout fit correctly
 	 */

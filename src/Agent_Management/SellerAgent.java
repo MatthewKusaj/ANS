@@ -5,6 +5,7 @@
  */
 package Agent_Management;
 
+import GUI.SellerItemsGui;
 import jade.core.Agent;
 import jade.core.behaviours.*;
 import jade.lang.acl.ACLMessage;
@@ -17,13 +18,16 @@ import jade.domain.FIPAAgentManagement.ServiceDescription;
 import java.util.*;
 
 public class SellerAgent extends Agent {
+    
+        private static final SellerAgent INSTANCE = new SellerAgent();
 	// The catalogue of books for sale (maps the title of a book to its price)
 	private Hashtable catalogue;
 	// The GUI by means of which the user can add books in the catalogue
-	private BookSellerGui myGui;
+	private SellerItemsGui myGui;
         // The amount that will be substracted from the price if the proposal is not accepted
         private String loweringNumberS;
         private int loweringNumberI;
+        public SellerAgent myAgent;
 
 	// Put agent initializations here
 	protected void setup() {
@@ -34,8 +38,8 @@ public class SellerAgent extends Agent {
                 loweringNumberS = (String) args[0];
                 loweringNumberI = Integer.valueOf(loweringNumberS);
 		// Create and show the GUI 
-		myGui = new BookSellerGui(this);
-		myGui.showGui();
+		myGui = new SellerItemsGui("Create new Iem", 300,300, this);
+		//myGui.showGui();
 
 		// Register the book-selling service in the yellow pages
 		DFAgentDescription dfd = new DFAgentDescription();
@@ -68,7 +72,7 @@ public class SellerAgent extends Agent {
 			fe.printStackTrace();
 		}
 		// Close the GUI
-		myGui.dispose();
+		//myGui.dispose();
 		// Printout a dismissal message
 		System.out.println("Seller-agent "+getAID().getName()+" terminating.");
 	}
@@ -159,4 +163,10 @@ public class SellerAgent extends Agent {
 			}
 		}
 	}  // End of inner class OfferRequestsServer
+        public static SellerAgent getInstance() {
+        return INSTANCE;
+        }
+        public SellerAgent getMyAgent(){
+        return myAgent;
+        }
 }
