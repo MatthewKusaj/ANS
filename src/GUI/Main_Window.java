@@ -5,7 +5,7 @@
  */
 package GUI;
 
-import Agent_Management.JADE_Backbone;
+import Agent_Management.ContainersManager;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
@@ -25,7 +25,8 @@ public class Main_Window extends Window{
     private JPanel eastPanel;
     private JPanel southPanel;
     
-    private JButton newAgent;
+    private JButton newBuyerAgent;
+    private JButton newSellerAgent;
     private JButton editAgent;
     private JButton deleteAgent;
 
@@ -35,7 +36,7 @@ public class Main_Window extends Window{
     public Main_Window(String tit, int width, int height)
 	{
 		super(tit, width, height);
-		JADE_Backbone.getInstance().startRMA();
+		ContainersManager.getInstance().startRMA();
                 initiWidgets();
 	}
     private void initiWidgets(){
@@ -53,8 +54,10 @@ public class Main_Window extends Window{
                 eastPanel.add(sellerAgentsList);
                 
                 southPanel = new JPanel(new FlowLayout());
-                newAgent = new JButton("Create Agent");
-                southPanel.add(newAgent);
+                newBuyerAgent = new JButton("Create Buyer Agent");
+                southPanel.add(newBuyerAgent);
+                newSellerAgent = new JButton("Create Seller Agent");
+                southPanel.add(newSellerAgent);
                 editAgent = new JButton("Edit Agent");
                 southPanel.add(editAgent);
                 deleteAgent = new JButton("Delete Agent");
@@ -68,13 +71,17 @@ public class Main_Window extends Window{
                 mainPanel.add(southPanel, BorderLayout.SOUTH);
                 getWindow().add(mainPanel);
                 
-		newAgent.addActionListener(this);
+		newBuyerAgent.addActionListener(this);
+                newSellerAgent.addActionListener(this);
                 setFrameOptions();
     }
     @Override
     public void actionPerformed(ActionEvent e) {
-        if(e.getSource().equals(newAgent)){
-            new AgentCreationWindow("Create New Agent", 200, 100);
+        if(e.getSource().equals(newBuyerAgent)){
+            new CreateBuyerAgentWindow("Create New Buyer Agent", 500, 100);
+        }
+        if(e.getSource().equals(newSellerAgent)){
+            new CreateSellerAgentWindow("Create New Seller Agent", 500, 100);
         }
     }
     

@@ -5,7 +5,7 @@
  */
 package GUI;
 
-import Agent_Management.JADE_Backbone;
+import Agent_Management.ContainersManager;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
@@ -21,7 +21,7 @@ import javax.swing.WindowConstants;
  *
  * @author Matthew
  */
-public class AgentCreationWindow extends Window{
+public class CreateBuyerAgentWindow extends Window{
    
     ContainerController myContainer;
     public  String SECONDARY_PROPERTIES_FILE = "cfg/containerServer.cfg"; 
@@ -36,7 +36,7 @@ public class AgentCreationWindow extends Window{
     private JTextField nameText;
     private JButton accept;
     
-    public AgentCreationWindow (String tit, int width, int height)
+    public CreateBuyerAgentWindow (String tit, int width, int height)
 	{
 		super(tit, width, height);
                 initiWidgets();
@@ -44,12 +44,11 @@ public class AgentCreationWindow extends Window{
     private void initiWidgets(){
         // Create panel for widgets and layout
 		getWindow().setResizable(false);
-		getWindow().setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
                 
                 panelName = new JPanel(new FlowLayout());
                 nameLabel = new JLabel("Agent Name");
                 panelName.add(nameLabel);
-                nameText = new JTextField("                           ");
+                nameText = new JTextField("Buyer Agent");
                 panelName.add(nameText);
                 
                 panelButtons = new JPanel(new FlowLayout());
@@ -70,7 +69,10 @@ public class AgentCreationWindow extends Window{
         if(e.getSource().equals(accept)){        
             agentName = nameText.getText();
 		try{
-                    myContainer = JADE_Backbone.getInstance().getMainContainer();
+                    if(!ContainersManager.getInstance().buyerContainerExists()){
+                        ContainersManager.getInstance().createBuyerContainer();
+                    }
+                    myContainer = ContainersManager.getInstance().getBuyerContainer();
                     AgentController ac = myContainer.createNewAgent(agentName, "jade.core.Agent", null);
                     }   catch(Exception ex) {
 		}
