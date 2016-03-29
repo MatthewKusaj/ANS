@@ -55,7 +55,7 @@ public abstract class Window implements ActionListener{
 		window.setVisible(true);
 
 	}
-        public Window(String tit, int width, int heright, SellerAgent a){
+        public Window(String tit, int width, int height, SellerAgent a){
             title = tit;
 		this.width = width;
 		this.height = height;

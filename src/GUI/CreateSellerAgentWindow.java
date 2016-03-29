@@ -6,6 +6,7 @@
 package GUI;
 
 import Agent_Management.ContainersManager;
+import Agent_Management.SellerAgent;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
@@ -64,12 +65,14 @@ public class CreateSellerAgentWindow extends Window{
     private JList<String> valueOfItemsList;
     private DefaultListModel valueOfItemsModel;
     
-    
+    private final SellerAgent newSellerAgent;
     private Object[] args;
     
     public CreateSellerAgentWindow (String tit, int width, int height)
 	{
 		super(tit, width, height);
+
+                newSellerAgent = new SellerAgent();
                 initiWidgets();
         }
     private void initiWidgets(){
@@ -162,18 +165,22 @@ public class CreateSellerAgentWindow extends Window{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(addItemButton)){
+                agentName = nameText.getText();
+                loweringValue = loweringValueText.getText();
+                args = new Object[1];
+                args[0] = "50";
             
-            agentName = nameText.getText();
-            loweringValue = loweringValueText.getText();
-            args = new Object[1];
-            args[0] = loweringValue;
 		try{
                     if(!ContainersManager.getInstance().sellerContainerExists()){
                         ContainersManager.getInstance().createSellerContainer();
                     }
                     myContainer = ContainersManager.getInstance().getSellerContainer();
-                    AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.SellerAgent", args);
-                    ac.start();
+                    
+                    //if( newSellerAgent.getAID().getName() == agentName){
+
+                        AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.SellerAgent", args);
+                        ac.start();
+                //}
                     }   catch(Exception ex) {
 		}
         }

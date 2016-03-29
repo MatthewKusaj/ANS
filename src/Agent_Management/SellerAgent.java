@@ -22,14 +22,21 @@ public class SellerAgent extends Agent {
         private static final SellerAgent INSTANCE = new SellerAgent();
 	// The catalogue of books for sale (maps the title of a book to its price)
 	private Hashtable catalogue;
+        private ArrayList<String> parameters;
 	// The GUI by means of which the user can add books in the catalogue
 	private SellerItemsGui myGui;
         // The amount that will be substracted from the price if the proposal is not accepted
         private String loweringNumberS;
         private int loweringNumberI;
+        private String newPriceString;
+        private int newPriceInt;
         public SellerAgent myAgent;
+        private int valueStart;
+        private int valueEnd;
 
+        
 	// Put agent initializations here
+        @Override
 	protected void setup() {
 		// Create the catalogue
 		catalogue = new Hashtable();
@@ -38,7 +45,7 @@ public class SellerAgent extends Agent {
                 loweringNumberS = (String) args[0];
                 loweringNumberI = Integer.valueOf(loweringNumberS);
 		// Create and show the GUI 
-		myGui = new SellerItemsGui("Create new Iem", 300,300, this);
+		myGui = new SellerItemsGui("Create new Iem", 500, 140, this);
 		//myGui.showGui();
 
 		// Register the book-selling service in the yellow pages
@@ -52,7 +59,6 @@ public class SellerAgent extends Agent {
 			DFService.register(this, dfd);
 		}
 		catch (FIPAException fe) {
-			fe.printStackTrace();
 		}
 
 		// Add the behaviour serving queries from buyer agents
@@ -63,13 +69,13 @@ public class SellerAgent extends Agent {
 	}
 
 	// Put agent clean-up operations here
+        @Override
 	protected void takeDown() {
 		// Deregister from the yellow pages
 		try {
 			DFService.deregister(this);
 		}
 		catch (FIPAException fe) {
-			fe.printStackTrace();
 		}
 		// Close the GUI
 		//myGui.dispose();
@@ -79,12 +85,15 @@ public class SellerAgent extends Agent {
 
 	/**
      This is invoked by the GUI when the user adds a new book for sale
+     * @param title
+     * @param parameters
 	 */
-	public void updateCatalogue(final String title, final int price) {
+	public void updateCatalogue(final String title, final ArrayList<String> parameters) {
 		addBehaviour(new OneShotBehaviour() {
+                        @Override
 			public void action() {
-				catalogue.put(title, new Integer(price));
-				System.out.println(title+" inserted into catalogue by" + getAID().getName() + ". Price = "+price);
+				catalogue.put(title, parameters);
+				System.out.println(title+" inserted into catalogue by " + getAID().getName() + ". Utility = "+parameters.get(0).substring(2, parameters.get(0).length() - 2) + " Current Price = "+ parameters.get(1).substring(2, parameters.get(1).length() - 2));
 			}
 		} );
 	}
@@ -106,14 +115,24 @@ public class SellerAgent extends Agent {
 				String title = msg.getContent();
 				ACLMessage reply = msg.createReply();
 
-				Integer price = (Integer) catalogue.get(title);
-				if (price != null) {
+                                if(catalogue.get(title) != null){
+				String parametersString = catalogue.get(title).toString();
+                                System.out.println(parametersString);
+                                valueStart = parametersString.indexOf("$v");
+                                valueEnd = parametersString.indexOf("v$");
+                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
+                                Integer price = Integer.valueOf(newparam);
+//				if (price != null) {
 					// The requested book is available for sale. Reply with the price
 					reply.setPerformative(ACLMessage.PROPOSE);
-					reply.setContent(String.valueOf(price.intValue()));
-                                        catalogue.remove(title);
-                                        catalogue.put(title, price - loweringNumberI);
-                                        price = (Integer) catalogue.get(title);
+					reply.setContent(String.valueOf(price));
+                                        //catalogue.remove(title);
+                                        newPriceInt = price - loweringNumberI;
+                                        newPriceString = String.valueOf(newPriceInt);
+                                        parameters = SellerItemsGui.getProperties();
+                                        parameters.set(1, "$v" + newPriceString + "v$");
+                                        catalogue.put(title, parameters);
+                                        price = newPriceInt;
                                         System.out.println("The price of the book " + title + " selling by " + getAID().getName() + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
 				}
 				else {
@@ -138,6 +157,7 @@ public class SellerAgent extends Agent {
 	   purchase has been sucesfully completed.
 	 */
 	private class PurchaseOrdersServer extends CyclicBehaviour {
+                @Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.ACCEPT_PROPOSAL);
 			ACLMessage msg = myAgent.receive(mt);

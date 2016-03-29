@@ -39,7 +39,7 @@ public class BuyerAgent extends Agent {
 			System.out.println("Target book is "+targetBookTitle + " and its max price is " + maxPriceI);
 
 			// Add a TickerBehaviour that schedules a request to seller agents every minute
-			addBehaviour(new TickerBehaviour(this, 30000) {
+			addBehaviour(new TickerBehaviour(this, 10000) {
 				protected void onTick() {
 					System.out.println("Trying to buy "+targetBookTitle);
 					// Update the list of seller agents
