@@ -24,9 +24,10 @@ public class BuyerAgent extends Agent {
 	private AID[] sellerAgents;
 
 	// Put agent initializations here
+        @Override
 	protected void setup() {
 		// Printout a welcome message
-		System.out.println("Hallo! Buyer-agent "+getAID().getName()+" is ready.");
+		System.out.println("Hallo! Buyer-agent "+getAID().getName().replace("@192.168.0.11:1099/JADE", " ")+" is ready.");
 
 		// Get the title of the book to buy as a start-up argument
 		Object[] args = getArguments();
@@ -53,11 +54,10 @@ public class BuyerAgent extends Agent {
 						sellerAgents = new AID[result.length];
 						for (int i = 0; i < result.length; ++i) {
 							sellerAgents[i] = result[i].getName();
-							System.out.println(sellerAgents[i].getName());
+							System.out.println(sellerAgents[i].getName().replace("@192.168.0.11:1099/JADE", " "));
 						}
 					}
 					catch (FIPAException fe) {
-						fe.printStackTrace();
 					}
 
 					// Perform the request
@@ -73,9 +73,10 @@ public class BuyerAgent extends Agent {
 	}
 
 	// Put agent clean-up operations here
+        @Override
 	protected void takeDown() {
 		// Printout a dismissal message
-		System.out.println("Buyer-agent "+getAID().getName()+" terminating.");
+		System.out.println("Buyer-agent "+getAID().getName().replace("@192.168.0.11:1099/JADE", " ")+" terminating.");
 	}
 
 	/**
@@ -90,6 +91,7 @@ public class BuyerAgent extends Agent {
 		private MessageTemplate mt; // The template to receive replies
 		private int step = 0;
 
+                @Override
 		public void action() {
 			switch (step) {
 			case 0:
@@ -152,7 +154,7 @@ public class BuyerAgent extends Agent {
 					// Purchase order reply received
 					if (reply.getPerformative() == ACLMessage.INFORM) {
 						// Purchase successful. We can terminate
-						System.out.println(targetBookTitle+" successfully purchased from agent "+reply.getSender().getName());
+						System.out.println(targetBookTitle+" successfully purchased from agent "+reply.getSender().getName().replace("@192.168.0.11:1099/JADE", " "));
 						System.out.println("Price = "+bestPrice);
 						myAgent.doDelete();
 					}
@@ -169,6 +171,7 @@ public class BuyerAgent extends Agent {
 			}        
 		}
 
+                @Override
 		public boolean done() {
 			if (step == 2 && bestSeller == null) {
 				System.out.println("Attempt failed: "+targetBookTitle+" not available for sale");

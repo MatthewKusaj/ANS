@@ -83,7 +83,8 @@ public class CreateBuyerAgentWindow extends Window{
                     ac.start();
                     }   catch(Exception ex) {
 		}
-        Main_Window.buyerAgentsListModel.addElement(agentName);        
+            Main_Window.buyerAgentsListModel.addElement(agentName);  
+            getWindow().dispose();
         }
     }       
 }

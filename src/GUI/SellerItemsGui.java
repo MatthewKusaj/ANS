@@ -100,14 +100,18 @@ public class SellerItemsGui extends Window{
             String value = valueText.getText().trim();
             
             properties = new ArrayList<>();
-            properties.add("$u" + utility + "u$");
-            properties.add("$v" + value + "v$");
+            properties.add(utility);
+            properties.add(value);
             
             myAgent.updateCatalogue(title, properties);
             
             nameText.setText(null);
             utilityText.setText(null);
             valueText.setText(null);
+            
+            CreateSellerAgentWindow.nameOfItemsModel.addElement(title);
+            CreateSellerAgentWindow.utilityOfItemsModel.addElement(utility);
+            CreateSellerAgentWindow.valueOfItemsModel.addElement(value);
             }catch(Exception ec){
                 JOptionPane.showMessageDialog(getWindow(), "Invalid values. "+ec.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
             }

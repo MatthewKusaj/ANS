@@ -59,11 +59,11 @@ public class CreateSellerAgentWindow extends Window{
     private JButton cancelButton;
     
     private JList<String> nameOfItemsList;
-    private DefaultListModel nameOfItemsModel;
+    public static DefaultListModel nameOfItemsModel;
     private JList<String> utilityOfItemsList;
-    private DefaultListModel utilityOfItemsModel;
+    public static DefaultListModel utilityOfItemsModel;
     private JList<String> valueOfItemsList;
-    private DefaultListModel valueOfItemsModel;
+    public static DefaultListModel valueOfItemsModel;
     
     private final SellerAgent newSellerAgent;
     private Object[] args;
@@ -181,12 +181,14 @@ public class CreateSellerAgentWindow extends Window{
                         AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.SellerAgent", args);
                         ac.start();
                 //}
+                        
                     }   catch(Exception ex) {
 		}
         }
         if(e.getSource().equals(acceptButton)){        
             
             Main_Window.sellerAgentsListModel.addElement(agentName);
+            getWindow().dispose();
         }
     }       
 }
