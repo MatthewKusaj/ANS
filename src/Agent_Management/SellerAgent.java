@@ -30,6 +30,8 @@ public class SellerAgent extends Agent {
         private int loweringNumberI;
         private String newPriceString;
         private int newPriceInt;
+        private String minimalPriceS;
+        private int minimalPriceI;
         public SellerAgent myAgent;
         private int valueStart;
         private int valueEnd;
@@ -42,10 +44,8 @@ public class SellerAgent extends Agent {
 		catalogue = new HashMap();
                 //get the value that will be used to lower the price
                 Object[] args= getArguments();
-                loweringNumberS = (String) args[0];
-                loweringNumberI = Integer.valueOf(loweringNumberS);
 		// Create and show the GUI 
-		myGui = new SellerItemsGui("Create new Iem", 500, 140, this);
+		myGui = new SellerItemsGui("Create new Iem", 500, 300, this);
 		//myGui.showGui();
 
 		// Register the book-selling service in the yellow pages
@@ -125,20 +125,27 @@ public class SellerAgent extends Agent {
 //                                valueEnd = parametersString.indexOf("v$");
 //                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
 //                                Integer price = Integer.valueOf(newparam);
-                                if(catalogue.get(title) != null){
+                                minimalPriceS = parameters.get(3).toString();
+                                minimalPriceI = Integer.valueOf(minimalPriceS);
+                                if(catalogue.get(title) != null && price >= minimalPriceI){
 //				if (price != null) {
 					// The requested book is available for sale. Reply with the price
 					reply.setPerformative(ACLMessage.PROPOSE);
 					reply.setContent(String.valueOf(price));
-                                        catalogue.remove(title);
-                                        newPriceInt = price - loweringNumberI;
-                                        newPriceString = String.valueOf(newPriceInt);
-                                        parameters.set(1, newPriceString);
+                                        
+                                        loweringNumberS = parameters.get(2).toString();
+                                        if(!"0".equals(loweringNumberS)){
+                                            loweringNumberI = Integer.valueOf(loweringNumberS);
+                                            catalogue.remove(title);
+                                            newPriceInt = price - loweringNumberI;
+                                            newPriceString = String.valueOf(newPriceInt);
+                                            parameters.set(1, newPriceString);
 //                                        parameters.set(1, "$v" + newPriceString + "v$");
-                                        catalogue.put(title, parameters);
-                                        price = newPriceInt;
-                                        System.out.println("The price of the book " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
-				}
+                                            catalogue.put(title, parameters);
+                                            price = newPriceInt;
+                                            System.out.println("The price of the book " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
+                                        }
+                                    }
 				else {
 					// The requested book is NOT available for sale.
 					reply.setPerformative(ACLMessage.REFUSE);

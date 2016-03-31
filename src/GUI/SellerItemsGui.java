@@ -6,8 +6,11 @@
 package GUI;
 
 import Agent_Management.SellerAgent;
+import Negotiation_Strategies.Lowering_Value;
+import Negotiation_Strategies.Minimal_Price;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.JButton;
@@ -28,16 +31,27 @@ public class SellerItemsGui extends Window{
     private JPanel utilityPanel;
     private JPanel valuePanel;
     private JPanel buttonsPanel;
+    private JPanel negotiationStrategyPanel;
+    private JPanel negotiationStrategyTopPanel;
+    private JPanel negotiationStrategyPropertiesPanel;
+    private JPanel loweringValuePanel;
+    private JPanel minimalPricePanel;
     
     public SellerAgent myAgent;
     
+    private JLabel fillerLabel;
     private JLabel nameLabel;
     private JLabel utilityLabel;
     private JLabel valueLabel;
+    private JLabel negotiationStrategyLabel;
+    private JLabel loweringValueLabel;
+    private JLabel minimalPriceLabel;
     
     private JTextField nameText;
     private JTextField utilityText;
     private JTextField valueText;
+    public static JTextField loweringValueText;
+    public static JTextField minimalPriceText;
     
     private JButton acceptButton;
     private JButton cancelButton;
@@ -80,8 +94,32 @@ public class SellerItemsGui extends Window{
         cancelButton = new JButton("Cancel");
         buttonsPanel.add(cancelButton, BorderLayout.EAST);
         
+        negotiationStrategyPanel = new JPanel(new BorderLayout());
+        negotiationStrategyTopPanel = new JPanel(new FlowLayout());
+        negotiationStrategyPanel.add(negotiationStrategyTopPanel, BorderLayout.NORTH);
+        fillerLabel = new JLabel("                       ");
+        negotiationStrategyLabel = new JLabel("Negotiation Strategy");
+        negotiationStrategyTopPanel.add(fillerLabel);
+        negotiationStrategyTopPanel.add(negotiationStrategyLabel);
+        negotiationStrategyTopPanel.add(fillerLabel);
+        negotiationStrategyPropertiesPanel = new JPanel(new GridLayout(1,4));
+        negotiationStrategyPanel.add(negotiationStrategyPropertiesPanel, BorderLayout.CENTER);
+        loweringValuePanel = new JPanel (new FlowLayout());
+        loweringValueLabel = new JLabel("Reduction value");
+        loweringValueText = new JTextField(20);
+        negotiationStrategyPropertiesPanel.add(loweringValuePanel);
+        loweringValuePanel.add(loweringValueLabel);
+        loweringValuePanel.add(loweringValueText);
+        minimalPricePanel = new JPanel(new FlowLayout());
+        minimalPriceLabel = new JLabel("Minimal price");
+        minimalPriceText = new JTextField(20);
+        negotiationStrategyPropertiesPanel.add(minimalPricePanel);
+        minimalPricePanel.add(minimalPriceLabel);
+        minimalPricePanel.add(minimalPriceText);
+        
         panel = new JPanel(new BorderLayout());
-        panel.add(infoPanel, BorderLayout.CENTER);
+        panel.add(infoPanel, BorderLayout.NORTH);
+        panel.add(negotiationStrategyPanel, BorderLayout.CENTER);
         panel.add(buttonsPanel, BorderLayout.SOUTH);
         
         acceptButton.addActionListener(this);
@@ -105,13 +143,29 @@ public class SellerItemsGui extends Window{
             
             myAgent.updateCatalogue(title, properties);
             
-            nameText.setText(null);
-            utilityText.setText(null);
-            valueText.setText(null);
+            
             
             CreateSellerAgentWindow.nameOfItemsModel.addElement(title);
             CreateSellerAgentWindow.utilityOfItemsModel.addElement(utility);
             CreateSellerAgentWindow.valueOfItemsModel.addElement(value);
+            
+            if (loweringValueText.getText() == null){
+                properties.add("0");
+            }else{
+                properties.add(Lowering_Value.addLoweringValue());
+            }
+            if (minimalPriceText.getText() == null){
+                properties.add("0");
+            }else{
+                properties.add(Minimal_Price.addMinimalPrice());
+            }
+            
+            nameText.setText(null);
+            utilityText.setText(null);
+            valueText.setText(null);
+            loweringValueText.setText(null);
+            minimalPriceText.setText(null);
+            
             }catch(Exception ec){
                 JOptionPane.showMessageDialog(getWindow(), "Invalid values. "+ec.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 
             }

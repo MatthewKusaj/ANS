@@ -39,7 +39,6 @@ public class CreateSellerAgentWindow extends Window{
     private JPanel panelColumnNames;
     private JPanel panelLists;
     private JPanel panelListButtons;
-    private JPanel panelNegotiationStrategy;
     
     private JLabel fillerLabel;
     private JLabel nameLabel;
@@ -47,10 +46,8 @@ public class CreateSellerAgentWindow extends Window{
     private JLabel nameItemLabel;
     private JLabel utilityItemLabel;
     private JLabel valueItemLabel;
-    private JLabel negotiationStrategyLabel;
     
     private JTextField nameText;
-    private JTextField loweringValueText;
     
     private JButton addItemButton;
     private JButton editItemButton;
@@ -88,8 +85,6 @@ public class CreateSellerAgentWindow extends Window{
                 panelSettings = new JPanel(new BorderLayout());
                 panelListOfItems = new JPanel(new BorderLayout());
                 panelSettings.add(panelListOfItems, BorderLayout.CENTER);
-                panelNegotiationStrategy = new JPanel(new BorderLayout());
-                panelSettings.add(panelNegotiationStrategy, BorderLayout.SOUTH);
                 
                 listOfItemsLabel = new JLabel("List of items");
                 panelListOfItems.add(listOfItemsLabel, BorderLayout.NORTH);
@@ -132,11 +127,6 @@ public class CreateSellerAgentWindow extends Window{
                 deleteItemButton = new JButton("Delete Item");
                 panelListButtons.add(deleteItemButton);
                 
-                negotiationStrategyLabel = new JLabel("Negotiation Strategy");
-                panelNegotiationStrategy.add(negotiationStrategyLabel, BorderLayout.NORTH);
-                loweringValueText = new JTextField(20);
-                panelNegotiationStrategy.add(loweringValueText, BorderLayout.SOUTH);
-                
                 panelButtons = new JPanel(new FlowLayout());
                 acceptButton = new JButton("Accept");
                 panelButtons.add(acceptButton);
@@ -166,9 +156,8 @@ public class CreateSellerAgentWindow extends Window{
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(addItemButton)){
                 agentName = nameText.getText();
-                loweringValue = loweringValueText.getText();
                 args = new Object[1];
-                args[0] = "50";
+                args[0] = null;
             
 		try{
                     if(!ContainersManager.getInstance().sellerContainerExists()){
