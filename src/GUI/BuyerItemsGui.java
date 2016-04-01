@@ -5,9 +5,13 @@
  */
 package GUI;
 
+import Agent_Management.BuyerAgent;
+import Agent_Management.ContainersManager;
 import Agent_Management.SellerAgent;
 import Negotiation_Strategies.Lowering_Value;
 import Negotiation_Strategies.Minimal_Price;
+import jade.wrapper.AgentController;
+import jade.wrapper.ContainerController;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
@@ -37,7 +41,7 @@ public class BuyerItemsGui extends Window{
     private JPanel loweringValuePanel;
     private JPanel minimalPricePanel;
     
-    public SellerAgent myAgent;
+    public BuyerAgent myAgent;
     
     private JLabel fillerLabel;
     private JLabel nameLabel;
@@ -57,10 +61,10 @@ public class BuyerItemsGui extends Window{
     private JButton cancelButton;
 
     private static ArrayList<String> properties;
-    public BuyerItemsGui(String tit, int width, int height, SellerAgent a) {
-        super(tit, width, height, SellerAgent.getInstance());
+    public BuyerItemsGui(String tit, int width, int height, BuyerAgent b) {
+        super(tit, width, height, BuyerAgent.getInstance());
         
-        myAgent = a;
+        myAgent = b;
         initiWidgets();
     }
 
@@ -134,9 +138,11 @@ public class BuyerItemsGui extends Window{
         if(e.getSource().equals(acceptButton)){
             try{
             String title = nameText.getText().trim();
+            System.out.println(title);
             String utility = utilityText.getText().trim();
+            System.out.println(utility);
             String value = valueText.getText().trim();
-            
+            System.out.println(value);
             properties = new ArrayList<>();
             properties.add(utility);
             properties.add(value);
@@ -145,9 +151,9 @@ public class BuyerItemsGui extends Window{
             
             
             
-            CreateSellerAgentWindow.nameOfItemsModel.addElement(title);
-            CreateSellerAgentWindow.utilityOfItemsModel.addElement(utility);
-            CreateSellerAgentWindow.valueOfItemsModel.addElement(value);
+            CreateBuyerAgentWindow.nameOfItemsModel.addElement(title);
+            CreateBuyerAgentWindow.utilityOfItemsModel.addElement(utility);
+            CreateBuyerAgentWindow.valueOfItemsModel.addElement(value);
             
             if (loweringValueText.getText() == null){
                 properties.add("0");
@@ -159,6 +165,8 @@ public class BuyerItemsGui extends Window{
             }else{
                 properties.add(Minimal_Price.addMinimalPrice());
             }
+            System.out.println(properties);
+              
             
             nameText.setText(null);
             utilityText.setText(null);

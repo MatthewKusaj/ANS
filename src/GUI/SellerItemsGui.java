@@ -47,7 +47,7 @@ public class SellerItemsGui extends Window{
     private JLabel loweringValueLabel;
     private JLabel minimalPriceLabel;
     
-    private JTextField nameText;
+    public static JTextField nameText;
     private JTextField utilityText;
     private JTextField valueText;
     public static JTextField loweringValueText;

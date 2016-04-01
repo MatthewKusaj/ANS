@@ -20,10 +20,10 @@ import java.util.*;
 public class SellerAgent extends Agent {
     
         private static final SellerAgent INSTANCE = new SellerAgent();
-	// The catalogue of books for sale (maps the title of a book to its price)
-	private HashMap catalogue;
+	// The catalogueSeller of books for sale (maps the title of a book to its price)
+	private HashMap catalogueSeller;
         private ArrayList<String> parameters;
-	// The GUI by means of which the user can add books in the catalogue
+	// The GUI by means of which the user can add books in the catalogueSeller
 	private SellerItemsGui myGui;
         // The amount that will be substracted from the price if the proposal is not accepted
         private String loweringNumberS;
@@ -40,8 +40,8 @@ public class SellerAgent extends Agent {
 	// Put agent initializations here
         @Override
 	protected void setup() {
-		// Create the catalogue
-		catalogue = new HashMap();
+		// Create the catalogueSeller
+		catalogueSeller = new HashMap();
                 //get the value that will be used to lower the price
                 Object[] args= getArguments();
 		// Create and show the GUI 
@@ -92,7 +92,7 @@ public class SellerAgent extends Agent {
 		addBehaviour(new OneShotBehaviour() {
                         @Override
 			public void action() {
-				catalogue.put(title, parameters);
+				catalogueSeller.put(title, parameters);
 				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + " Utility = "+parameters.get(0) + " Current Price = "+ parameters.get(1));
 			}
 		} );
@@ -102,7 +102,7 @@ public class SellerAgent extends Agent {
 	   Inner class OfferRequestsServer.
 	   This is the behaviour used by Book-seller agents to serve incoming requests 
 	   for offer from buyer agents.
-	   If the requested book is in the local catalogue the seller agent replies 
+	   If the requested book is in the local catalogueSeller the seller agent replies 
 	   with a PROPOSE message specifying the price. Otherwise a REFUSE message is
 	   sent back.
 	 */
@@ -116,18 +116,18 @@ public class SellerAgent extends Agent {
 				String title = msg.getContent();
 				ACLMessage reply = msg.createReply();
 
-                                //if(catalogue.get(title) != null){
-                                ArrayList parameters =  (ArrayList) catalogue.get(title);
-                                System.out.println(catalogue.get(title));
+                                //if(catalogueSeller.get(title) != null){
+                                ArrayList parameters =  (ArrayList) catalogueSeller.get(title);
+                                System.out.println(catalogueSeller.get(title));
                                 Integer price = Integer.valueOf(parameters.get(1).toString());
-//				String parametersString = catalogue.get(title).toString();
+//				String parametersString = catalogueSeller.get(title).toString();
 //                                valueStart = parametersString.indexOf("$v");
 //                                valueEnd = parametersString.indexOf("v$");
 //                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
 //                                Integer price = Integer.valueOf(newparam);
                                 minimalPriceS = parameters.get(3).toString();
                                 minimalPriceI = Integer.valueOf(minimalPriceS);
-                                if(catalogue.get(title) != null && price >= minimalPriceI){
+                                if(catalogueSeller.get(title) != null && price >= minimalPriceI){
 //				if (price != null) {
 					// The requested book is available for sale. Reply with the price
 					reply.setPerformative(ACLMessage.PROPOSE);
@@ -136,12 +136,12 @@ public class SellerAgent extends Agent {
                                         loweringNumberS = parameters.get(2).toString();
                                         if(!"0".equals(loweringNumberS)){
                                             loweringNumberI = Integer.valueOf(loweringNumberS);
-                                            catalogue.remove(title);
+                                            catalogueSeller.remove(title);
                                             newPriceInt = price - loweringNumberI;
                                             newPriceString = String.valueOf(newPriceInt);
                                             parameters.set(1, newPriceString);
 //                                        parameters.set(1, "$v" + newPriceString + "v$");
-                                            catalogue.put(title, parameters);
+                                            catalogueSeller.put(title, parameters);
                                             price = newPriceInt;
                                             System.out.println("The price of the book " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
                                         }
@@ -163,7 +163,7 @@ public class SellerAgent extends Agent {
 	   Inner class PurchaseOrdersServer.
 	   This is the behaviour used by Book-seller agents to serve incoming 
 	   offer acceptances (i.e. purchase orders) from buyer agents.
-	   The seller agent removes the purchased book from its catalogue 
+	   The seller agent removes the purchased book from its catalogueSeller 
 	   and replies with an INFORM message to notify the buyer that the
 	   purchase has been sucesfully completed.
 	 */
@@ -177,10 +177,10 @@ public class SellerAgent extends Agent {
 				String title = msg.getContent();
 				ACLMessage reply = msg.createReply();
 
-                                ArrayList parameters =  (ArrayList) catalogue.get(title);
-                                System.out.println(catalogue.get(title));
+                                ArrayList parameters =  (ArrayList) catalogueSeller.get(title);
+                                System.out.println(catalogueSeller.get(title));
                                 Integer price = Integer.valueOf(parameters.get(1).toString());
-//				String parametersString = catalogue.remove(title).toString();
+//				String parametersString = catalogueSeller.remove(title).toString();
 //                                valueStart = parametersString.indexOf("$v");
 //                                valueEnd = parametersString.indexOf("v$");
 //                                String newparam = parametersString.substring(valueStart + 2, valueEnd);

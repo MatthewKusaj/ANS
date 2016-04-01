@@ -1,5 +1,7 @@
 package Agent_Management;
 
+import GUI.BuyerItemsGui;
+import GUI.SellerItemsGui;
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
@@ -9,8 +11,17 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import java.util.ArrayList;
+import java.util.HashMap;
 
 public class BuyerAgent extends Agent {
+    
+        private static final BuyerAgent INSTANCE = new BuyerAgent();
+
+        private HashMap catalogueBuyer;
+        private ArrayList<String> parameters;
+        private BuyerItemsGui myGui;
+        private String title;
         // Information about the book buyer is interested to obtain
         private String targetBook;
 	// The title of the book to buy
@@ -20,28 +31,41 @@ public class BuyerAgent extends Agent {
         // The maximum price the buyer is willing to pay
         private String maxPriceS;
         private int maxPriceI;
+        private String loweringNumberS;
+        private int loweringNumberI;
+        private String newPriceString;
+        private int newPriceInt;
+        public BuyerAgent myAgent;
 	// The list of known seller agents
 	private AID[] sellerAgents;
+        
+        public BuyerAgent(){
+            //myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
+        }
 
 	// Put agent initializations here
         @Override
 	protected void setup() {
 		// Printout a welcome message
 		System.out.println("Hallo! Buyer-agent "+getAID().getName().replace("@192.168.0.11:1099/JADE", " ")+" is ready.");
-
+                catalogueBuyer = new HashMap();
 		// Get the title of the book to buy as a start-up argument
-		Object[] args = getArguments();
-		if (args != null && args.length > 0) {
-			targetBook = (String) args[0];
-                        separator = targetBook.indexOf("/");
-                        targetBookTitle = targetBook.substring(0,(separator));
-                        maxPriceS = targetBook.substring(separator + 1);
-                        maxPriceI = Integer.valueOf(maxPriceS);
-			System.out.println("Target book is "+targetBookTitle + " and its max price is " + maxPriceI);
-
+		myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
+                DFAgentDescription dfd = new DFAgentDescription();
+		dfd.setName(getAID());
+		ServiceDescription bd = new ServiceDescription();
+		bd.setType("book-buying");
+		bd.setName("JADE-book-trading");
+		dfd.addServices(bd);
+		try {
+			DFService.register(this, dfd);
+		}
+		catch (FIPAException fe) {
+		}
 			// Add a TickerBehaviour that schedules a request to seller agents every minute
-			addBehaviour(new TickerBehaviour(this, 10000) {
+			addBehaviour(new TickerBehaviour(this, 30000) {
 				protected void onTick() {
+                                    setParameters();
 					System.out.println("Trying to buy "+targetBookTitle);
 					// Update the list of seller agents
 					DFAgentDescription template = new DFAgentDescription();
@@ -64,12 +88,8 @@ public class BuyerAgent extends Agent {
 					myAgent.addBehaviour(new RequestPerformer());
 				}
 			} );
-		}
-		else {
-			// Make the agent terminate
-			System.out.println("No target book title specified");
-			doDelete();
-		}
+		//}
+
 	}
 
 	// Put agent clean-up operations here
@@ -179,4 +199,47 @@ public class BuyerAgent extends Agent {
 			return ((step == 2 && bestSeller == null) || step == 4);
 		}
 	}  // End of inner class RequestPerformer
-}
+        
+        	public void updateCatalogue(final String title, final ArrayList<String> parameters) {
+		addBehaviour(new OneShotBehaviour() {
+                        @Override
+			public void action() {
+				catalogueBuyer.put(title, parameters);
+				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + " Utility = "+parameters.get(0) + " Current Price = "+ parameters.get(1));
+                                
+                        }
+		} );
+	}
+
+        public static BuyerAgent getInstance() {
+        return INSTANCE;
+        }
+        public BuyerAgent getMyAgent(){
+        return myAgent;
+        }
+        
+        
+        private  void setParameters(){
+            
+
+//        @Override
+//        public void action() {
+            title = "special";
+            ArrayList parameters =  (ArrayList) catalogueBuyer.get(title);
+            System.out.println(catalogueBuyer.get(title));
+            //Integer price = Integer.valueOf(parameters.get(1).toString());
+		if (parameters.isEmpty() == false) {
+			targetBook = catalogueBuyer.toString();
+                        separator = targetBook.indexOf(",");
+                        targetBookTitle = targetBook.substring(0,(separator));
+                        maxPriceS = parameters.get(2).toString();
+                        maxPriceI = Integer.valueOf(maxPriceS);
+			System.out.println("Target book is "+targetBookTitle + " and its max price is " + maxPriceI);
+                }	else {
+			// Make the agent terminate
+			System.out.println("No target book title specified");
+			doDelete();
+		}
+        }
+        }
+
