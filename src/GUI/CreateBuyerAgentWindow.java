@@ -47,7 +47,7 @@ public class CreateBuyerAgentWindow extends Window{
     private JLabel utilityItemLabel;
     private JLabel valueItemLabel;
     
-    private JTextField nameText;
+    public static JTextField nameText;
     
     private JButton addItemButton;
     private JButton editItemButton;
@@ -176,7 +176,7 @@ public class CreateBuyerAgentWindow extends Window{
         }
         if(e.getSource().equals(acceptButton)){        
             
-            Main_Window.sellerAgentsListModel.addElement(agentName);
+            Main_Window.buyerAgentsListModel.addElement(agentName);
             getWindow().dispose();
         }
     }       

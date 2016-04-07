@@ -6,9 +6,14 @@
 package GUI;
 
 import Agent_Management.ContainersManager;
+import jade.wrapper.ContainerController;
+import jade.wrapper.AgentController;
+import jade.wrapper.ControllerException;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JList;
@@ -21,6 +26,8 @@ import javax.swing.WindowConstants;
  * @author Matthew
  */
 public class Main_Window extends Window{
+    
+    private String selectedAgent;
     
     private JPanel mainPanel;
     private JPanel westPanel;
@@ -83,6 +90,7 @@ public class Main_Window extends Window{
                 
 		newBuyerAgent.addActionListener(this);
                 newSellerAgent.addActionListener(this);
+                runSimulation.addActionListener(this);
                 
                 buyerAgentsListModel = new DefaultListModel();
                 buyerAgentsList.setModel(buyerAgentsListModel);
@@ -98,6 +106,19 @@ public class Main_Window extends Window{
         }
         if(e.getSource().equals(newSellerAgent)){
             new CreateSellerAgentWindow("Create New Seller Agent", 800, 800);
+        }
+        if(e.getSource().equals(runSimulation)){
+//            newBuyerAgent.runBuyer();
+//            new TickerCheckerBuyer();
+            selectedAgent = buyerAgentsList.getSelectedValue();
+            ContainerController myContainer = ContainersManager.getInstance().getBuyerContainer();
+            try {
+                AgentController ac = myContainer.getAgent(selectedAgent + "@192.168.0.13:1099/JADE", true);
+                ac.activate();
+            } catch (ControllerException ex) {
+                Logger.getLogger(Main_Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
+           
         }
     }
     

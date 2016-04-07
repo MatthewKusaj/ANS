@@ -7,16 +7,18 @@ package GUI;
 
 import Agent_Management.BuyerAgent;
 import Agent_Management.ContainersManager;
-import Agent_Management.SellerAgent;
-import Negotiation_Strategies.Lowering_Value;
-import Negotiation_Strategies.Minimal_Price;
+import Negotiation_Strategies.Increasing_Value;
+import Negotiation_Strategies.Maximal_Price;
 import jade.wrapper.AgentController;
 import jade.wrapper.ContainerController;
+import jade.wrapper.ControllerException;
 import java.awt.BorderLayout;
 import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
@@ -29,6 +31,8 @@ import javax.swing.JTextField;
  */
 public class BuyerItemsGui extends Window{
     
+    private String selectedAgent;
+    
     private JPanel panel;
     private JPanel infoPanel;
     private JPanel namePanel;
@@ -38,8 +42,8 @@ public class BuyerItemsGui extends Window{
     private JPanel negotiationStrategyPanel;
     private JPanel negotiationStrategyTopPanel;
     private JPanel negotiationStrategyPropertiesPanel;
-    private JPanel loweringValuePanel;
-    private JPanel minimalPricePanel;
+    private JPanel increasingValuePanel;
+    private JPanel maximalPricePanel;
     
     public BuyerAgent myAgent;
     
@@ -48,14 +52,14 @@ public class BuyerItemsGui extends Window{
     private JLabel utilityLabel;
     private JLabel valueLabel;
     private JLabel negotiationStrategyLabel;
-    private JLabel loweringValueLabel;
-    private JLabel minimalPriceLabel;
+    private JLabel increasingValueLabel;
+    private JLabel maximalPriceLabel;
     
-    private JTextField nameText;
+    public static JTextField nameText;
     private JTextField utilityText;
     private JTextField valueText;
-    public static JTextField loweringValueText;
-    public static JTextField minimalPriceText;
+    public static JTextField increasingValueText;
+    public static JTextField maximalPriceText;
     
     private JButton acceptButton;
     private JButton cancelButton;
@@ -108,18 +112,18 @@ public class BuyerItemsGui extends Window{
         negotiationStrategyTopPanel.add(fillerLabel);
         negotiationStrategyPropertiesPanel = new JPanel(new GridLayout(1,4));
         negotiationStrategyPanel.add(negotiationStrategyPropertiesPanel, BorderLayout.CENTER);
-        loweringValuePanel = new JPanel (new FlowLayout());
-        loweringValueLabel = new JLabel("Increase value");
-        loweringValueText = new JTextField(20);
-        negotiationStrategyPropertiesPanel.add(loweringValuePanel);
-        loweringValuePanel.add(loweringValueLabel);
-        loweringValuePanel.add(loweringValueText);
-        minimalPricePanel = new JPanel(new FlowLayout());
-        minimalPriceLabel = new JLabel("Maximal price");
-        minimalPriceText = new JTextField(20);
-        negotiationStrategyPropertiesPanel.add(minimalPricePanel);
-        minimalPricePanel.add(minimalPriceLabel);
-        minimalPricePanel.add(minimalPriceText);
+        increasingValuePanel = new JPanel (new FlowLayout());
+        increasingValueLabel = new JLabel("Increase value");
+        increasingValueText = new JTextField(20);
+        negotiationStrategyPropertiesPanel.add(increasingValuePanel);
+        increasingValuePanel.add(increasingValueLabel);
+        increasingValuePanel.add(increasingValueText);
+        maximalPricePanel = new JPanel(new FlowLayout());
+        maximalPriceLabel = new JLabel("Maximal price");
+        maximalPriceText = new JTextField(20);
+        negotiationStrategyPropertiesPanel.add(maximalPricePanel);
+        maximalPricePanel.add(maximalPriceLabel);
+        maximalPricePanel.add(maximalPriceText);
         
         panel = new JPanel(new BorderLayout());
         panel.add(infoPanel, BorderLayout.NORTH);
@@ -136,6 +140,14 @@ public class BuyerItemsGui extends Window{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(acceptButton)){
+            selectedAgent = CreateBuyerAgentWindow.nameText.getText();
+             ContainerController myContainer = ContainersManager.getInstance().getBuyerContainer();
+            try {
+                AgentController ac = myContainer.getAgent(selectedAgent +"@192.168.0.13:1099/JADE", true);
+                ac.suspend();
+            } catch (ControllerException ex) {
+                Logger.getLogger(Main_Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
             try{
             String title = nameText.getText().trim();
             System.out.println(title);
@@ -155,15 +167,15 @@ public class BuyerItemsGui extends Window{
             CreateBuyerAgentWindow.utilityOfItemsModel.addElement(utility);
             CreateBuyerAgentWindow.valueOfItemsModel.addElement(value);
             
-            if (loweringValueText.getText() == null){
+            if (increasingValueText.getText() == null){
                 properties.add("0");
             }else{
-                properties.add(Lowering_Value.addLoweringValue());
+                properties.add(Increasing_Value.addIncreasingValue());
             }
-            if (minimalPriceText.getText() == null){
+            if (maximalPriceText.getText() == null){
                 properties.add("0");
             }else{
-                properties.add(Minimal_Price.addMinimalPrice());
+                properties.add(Maximal_Price.addMaximalPrice());
             }
             System.out.println(properties);
               
@@ -171,8 +183,8 @@ public class BuyerItemsGui extends Window{
             nameText.setText(null);
             utilityText.setText(null);
             valueText.setText(null);
-            loweringValueText.setText(null);
-            minimalPriceText.setText(null);
+            increasingValueText.setText(null);
+            maximalPriceText.setText(null);
             
             }catch(Exception ec){
                 JOptionPane.showMessageDialog(getWindow(), "Invalid values. "+ec.getMessage(), "Error", JOptionPane.ERROR_MESSAGE); 

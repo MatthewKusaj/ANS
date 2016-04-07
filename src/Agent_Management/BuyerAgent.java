@@ -18,26 +18,26 @@ public class BuyerAgent extends Agent {
     
         private static final BuyerAgent INSTANCE = new BuyerAgent();
 
-        private HashMap catalogueBuyer;
+        public static HashMap catalogueBuyer;
         private ArrayList<String> parameters;
         private BuyerItemsGui myGui;
         private String title;
         // Information about the book buyer is interested to obtain
-        private String targetBook;
+        private static String targetBook;
 	// The title of the book to buy
-	private String targetBookTitle;
+	public static String targetBookTitle;
         // The separator which will tell agent where is the price is "/" currently
         private int separator;
         // The maximum price the buyer is willing to pay
         private String maxPriceS;
         private int maxPriceI;
-        private String loweringNumberS;
-        private int loweringNumberI;
+        private String increasingNumberS;
+        private int increasingNumber;
         private String newPriceString;
         private int newPriceInt;
         public BuyerAgent myAgent;
 	// The list of known seller agents
-	private AID[] sellerAgents;
+	public static AID[] sellerAgents;
         
         public BuyerAgent(){
             //myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
@@ -62,8 +62,8 @@ public class BuyerAgent extends Agent {
 		}
 		catch (FIPAException fe) {
 		}
-			// Add a TickerBehaviour that schedules a request to seller agents every minute
-			addBehaviour(new TickerBehaviour(this, 30000) {
+		addBehaviour(new TickerBehaviour(this, 30000) {
+                                @Override
 				protected void onTick() {
                                     setParameters();
 					System.out.println("Trying to buy "+targetBookTitle);
@@ -104,7 +104,7 @@ public class BuyerAgent extends Agent {
 	   This is the behaviour used by Book-buyer agents to request seller 
 	   agents the target book.
 	 */
-	private class RequestPerformer extends Behaviour {
+	public class RequestPerformer extends Behaviour {
 		private AID bestSeller; // The agent who provides the best offer 
 		private int bestPrice;  // The best offered price
 		private int repliesCnt = 0; // The counter of replies from seller agents
@@ -143,7 +143,23 @@ public class BuyerAgent extends Agent {
 							bestSeller = reply.getSender();
                                                         
 						}
-					}
+					ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
+                                             increasingNumberS = (String) parameters.get(2);
+                                          price = Integer.valueOf(parameters.get(1).toString());
+                                        if(!"0".equals(increasingNumberS)){
+                                            increasingNumber = Integer.valueOf(increasingNumberS);
+                                            catalogueBuyer.remove(title);
+                                            newPriceInt = price + increasingNumber;
+                                            newPriceString = String.valueOf(newPriceInt);
+                                            parameters.set(1, newPriceString);
+//                                        parameters.set(1, "$v" + newPriceString + "v$");
+                                            catalogueBuyer.put(targetBookTitle, parameters);
+                                            price = newPriceInt;
+                                            System.out.println("The price of the book " + targetBookTitle + " buying by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been increased by "+ increasingNumber +" to a new price which is " + price);
+                                        }
+                                    
+                                }
+                                        
 					repliesCnt++;
 					if (repliesCnt >= sellerAgents.length) {
 						// We received all replies
@@ -219,20 +235,20 @@ public class BuyerAgent extends Agent {
         }
         
         
-        private  void setParameters(){
+        public void setParameters(){
             
 
 //        @Override
 //        public void action() {
-            title = "special";
-            ArrayList parameters =  (ArrayList) catalogueBuyer.get(title);
-            System.out.println(catalogueBuyer.get(title));
+            targetBook = catalogueBuyer.toString();
+            separator = targetBook.indexOf("=");
+            targetBookTitle = targetBook.substring(1,(separator));
+            ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
+            System.out.println(catalogueBuyer.get(targetBookTitle));
             //Integer price = Integer.valueOf(parameters.get(1).toString());
 		if (parameters.isEmpty() == false) {
-			targetBook = catalogueBuyer.toString();
-                        separator = targetBook.indexOf(",");
-                        targetBookTitle = targetBook.substring(0,(separator));
-                        maxPriceS = parameters.get(2).toString();
+			
+                        maxPriceS = parameters.get(3).toString();
                         maxPriceI = Integer.valueOf(maxPriceS);
 			System.out.println("Target book is "+targetBookTitle + " and its max price is " + maxPriceI);
                 }	else {
@@ -240,6 +256,35 @@ public class BuyerAgent extends Agent {
 			System.out.println("No target book title specified");
 			doDelete();
 		}
+        }
+        public void runBuyer(){
+            	// Add a TickerBehaviour that schedules a request to seller agents every minute
+			addBehaviour(new TickerBehaviour(this, 30000) {
+                                @Override
+				protected void onTick() {
+                                    setParameters();
+					System.out.println("Trying to buy "+targetBookTitle);
+					// Update the list of seller agents
+					DFAgentDescription template = new DFAgentDescription();
+					ServiceDescription sd = new ServiceDescription();
+					sd.setType("book-selling");
+					template.addServices(sd);
+					try {
+						DFAgentDescription[] result = DFService.search(myAgent, template); 
+						System.out.println("Found the following seller agents:");
+						sellerAgents = new AID[result.length];
+						for (int i = 0; i < result.length; ++i) {
+							sellerAgents[i] = result[i].getName();
+							System.out.println(sellerAgents[i].getName().replace("@192.168.0.11:1099/JADE", " "));
+						}
+					}
+					catch (FIPAException fe) {
+					}
+
+					// Perform the request
+					myAgent.addBehaviour(new RequestPerformer());
+				}
+			} );
         }
         }
 
