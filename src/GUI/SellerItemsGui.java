@@ -14,6 +14,7 @@ import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JComboBox;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -36,6 +37,7 @@ public class SellerItemsGui extends Window{
     private JPanel negotiationStrategyPropertiesPanel;
     private JPanel loweringValuePanel;
     private JPanel minimalPricePanel;
+    private JPanel askInformationPanel;
     
     public SellerAgent myAgent;
     
@@ -46,12 +48,15 @@ public class SellerItemsGui extends Window{
     private JLabel negotiationStrategyLabel;
     private JLabel loweringValueLabel;
     private JLabel minimalPriceLabel;
+    private JLabel askInformationLabel;
     
     public static JTextField nameText;
     private JTextField utilityText;
     private JTextField valueText;
     public static JTextField loweringValueText;
     public static JTextField minimalPriceText;
+    
+    private JComboBox askInformationCB;
     
     private JButton acceptButton;
     private JButton cancelButton;
@@ -102,7 +107,7 @@ public class SellerItemsGui extends Window{
         negotiationStrategyTopPanel.add(fillerLabel);
         negotiationStrategyTopPanel.add(negotiationStrategyLabel);
         negotiationStrategyTopPanel.add(fillerLabel);
-        negotiationStrategyPropertiesPanel = new JPanel(new GridLayout(1,4));
+        negotiationStrategyPropertiesPanel = new JPanel(new GridLayout(2,4));
         negotiationStrategyPanel.add(negotiationStrategyPropertiesPanel, BorderLayout.CENTER);
         loweringValuePanel = new JPanel (new FlowLayout());
         loweringValueLabel = new JLabel("Reduction value");
@@ -116,6 +121,13 @@ public class SellerItemsGui extends Window{
         negotiationStrategyPropertiesPanel.add(minimalPricePanel);
         minimalPricePanel.add(minimalPriceLabel);
         minimalPricePanel.add(minimalPriceText);
+        askInformationPanel = new JPanel(new FlowLayout());
+        askInformationLabel = new JLabel("Ask for max price");
+        String[] shareInformationOptions = {"Never ask","Always ask"};
+        askInformationCB = new JComboBox(shareInformationOptions);
+        negotiationStrategyPropertiesPanel.add(askInformationPanel);
+        askInformationPanel.add(askInformationLabel);
+        askInformationPanel.add(askInformationCB);
         
         panel = new JPanel(new BorderLayout());
         panel.add(infoPanel, BorderLayout.NORTH);
@@ -136,10 +148,11 @@ public class SellerItemsGui extends Window{
             String title = nameText.getText().trim();
             String utility = utilityText.getText().trim();
             String value = valueText.getText().trim();
-            
+            String option = (String) askInformationCB.getSelectedItem();
             properties = new ArrayList<>();
             properties.add(utility);
             properties.add(value);
+            
             
             myAgent.updateCatalogue(title, properties);
             
@@ -159,6 +172,7 @@ public class SellerItemsGui extends Window{
             }else{
                 properties.add(Minimal_Price.addMinimalPrice());
             }
+            properties.add(option);
             
             nameText.setText(null);
             utilityText.setText(null);
