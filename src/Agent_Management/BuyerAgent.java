@@ -13,6 +13,7 @@ import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 public class BuyerAgent extends Agent {
     
@@ -38,6 +39,7 @@ public class BuyerAgent extends Agent {
         public BuyerAgent myAgent;
 	// The list of known seller agents
 	public static AID[] sellerAgents;
+        private Random randomGenerator;
         
         public BuyerAgent(){
             //myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
@@ -50,7 +52,7 @@ public class BuyerAgent extends Agent {
 		System.out.println("Hallo! Buyer-agent "+getAID().getName().replace("@192.168.0.11:1099/JADE", " ")+" is ready.");
                 catalogueBuyer = new HashMap();
 		// Get the title of the book to buy as a start-up argument
-		myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
+		myGui = new BuyerItemsGui("Create new Iem", 500, 400, this);
                 DFAgentDescription dfd = new DFAgentDescription();
 		dfd.setName(getAID());
 		ServiceDescription bd = new ServiceDescription();
@@ -137,6 +139,7 @@ public class BuyerAgent extends Agent {
 					if (reply.getPerformative() == ACLMessage.PROPOSE) {
 						// This is an offer 
 						int price = Integer.parseInt(reply.getContent());
+
 						if ((bestSeller == null || price < bestPrice) && price <= maxPriceI) {
 							// This is the best offer at present that is lower than the maximum price
 							bestPrice = price;
@@ -145,17 +148,17 @@ public class BuyerAgent extends Agent {
 						}
 					ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
                                              increasingNumberS = (String) parameters.get(2);
-                                          price = Integer.valueOf(parameters.get(1).toString());
+                                          price = Integer.valueOf(parameters.get(3).toString());
                                         if(!"0".equals(increasingNumberS)){
                                             increasingNumber = Integer.valueOf(increasingNumberS);
                                             catalogueBuyer.remove(title);
                                             newPriceInt = price + increasingNumber;
                                             newPriceString = String.valueOf(newPriceInt);
-                                            parameters.set(1, newPriceString);
+                                            parameters.set(3, newPriceString);
 //                                        parameters.set(1, "$v" + newPriceString + "v$");
                                             catalogueBuyer.put(targetBookTitle, parameters);
                                             price = newPriceInt;
-                                            System.out.println("The price of the book " + targetBookTitle + " buying by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been increased by "+ increasingNumber +" to a new price which is " + price);
+                                            System.out.println("The  maximal price of the item " + targetBookTitle + " buying by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been increased by "+ increasingNumber +" to a new price which is " + price);
                                         }
                                     
                                 }
@@ -171,23 +174,39 @@ public class BuyerAgent extends Agent {
                                                 String info = msgInfo.getContent();
                                                 System.out.println(info);
                                                 replyInfo.setPerformative(ACLMessage.INFORM);
-                                                if ("Always truth".equals(parameters.get(4).toString())){
-                                                replyInfo.setContent(parameters.get(3).toString());
-                                                }if ("Always lie".equals(parameters.get(4).toString())){
-                                                String falseInfoS = parameters.get(3).toString();
-                                                int falseInfoI = Integer.valueOf(falseInfoS);
-                                                int newFalseInfoI = falseInfoI - 100;
-                                                replyInfo.setContent(Integer.toString(newFalseInfoI));
-                                            }
-                                                myAgent.send(replyInfo);
+                                                if ("Always share information".equals(parameters.get(4).toString())){
+                                                    if("Always truth".equals(parameters.get(5).toString())){
+                                                        replyInfo.setContent(parameters.get(3).toString());
+                                                    }if("Sometimes truth".equals(parameters.get(5).toString())){
+                                                        randomGenerator = new Random();
+                                                        int randomInt = randomGenerator.nextInt(9);
+                                                        if (randomInt <= 4){
+                                                                 replyInfo.setContent(parameters.get(3).toString());
+                                                        }if (randomInt > 5){
+                                                            String falseInfoS = parameters.get(3).toString();
+                                                            int falseInfoI = Integer.valueOf(falseInfoS);
+                                                            int newFalseInfoI = falseInfoI - 100;
+                                                            replyInfo.setContent(Integer.toString(newFalseInfoI));
+                                                        }
+                                                    }if("Always lie".equals(parameters.get(5).toString())){
+                                                        String falseInfoS = parameters.get(3).toString();
+                                                        int falseInfoI = Integer.valueOf(falseInfoS);
+                                                        int newFalseInfoI = falseInfoI - 100;
+                                                        replyInfo.setContent(Integer.toString(newFalseInfoI));
+                                                    }
+                                                    myAgent.send(replyInfo);
+                                                }
                                                 
                                             }}
+                                                
+                                                
+                                            
 					if (repliesCnt >= sellerAgents.length) {
 						// We received all replies
 						step = 2; 
 					}
-				}
-				else {
+				
+                                }else {
 					block();
 				}
 				break;
@@ -242,7 +261,7 @@ public class BuyerAgent extends Agent {
                         @Override
 			public void action() {
 				catalogueBuyer.put(title, parameters);
-				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + " Utility = "+parameters.get(0) + " Current Price = "+ parameters.get(1));
+				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + " Utility = "+parameters.get(0) + " Maximal Price = "+ parameters.get(3));
                                 
                         }
 		} );

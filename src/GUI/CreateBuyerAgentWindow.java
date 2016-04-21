@@ -45,7 +45,6 @@ public class CreateBuyerAgentWindow extends Window{
     private JLabel listOfItemsLabel;
     private JLabel nameItemLabel;
     private JLabel utilityItemLabel;
-    private JLabel valueItemLabel;
     
     public static JTextField nameText;
     
@@ -59,8 +58,6 @@ public class CreateBuyerAgentWindow extends Window{
     public static DefaultListModel nameOfItemsModel;
     private JList<String> utilityOfItemsList;
     public static DefaultListModel utilityOfItemsModel;
-    private JList<String> valueOfItemsList;
-    public static DefaultListModel valueOfItemsModel;
     
     private final BuyerAgent newBuyerAgent;
     private Object[] args;
@@ -104,17 +101,12 @@ public class CreateBuyerAgentWindow extends Window{
                 panelColumnNames.add(fillerLabel);
                 utilityItemLabel = new JLabel("Utility");
                 panelColumnNames.add(utilityItemLabel);
-                fillerLabel = new JLabel("          ");
-                panelColumnNames.add(fillerLabel);
-                valueItemLabel = new JLabel("Value");
-                panelColumnNames.add(valueItemLabel);
                 
                 nameOfItemsList = new JList<>();
                 panelLists.add(nameOfItemsList, BorderLayout.WEST);
                 utilityOfItemsList = new JList<>();
-                panelLists.add(utilityOfItemsList, BorderLayout.CENTER);
-                valueOfItemsList = new JList<>();
-                panelLists.add(valueOfItemsList, BorderLayout.EAST);
+                panelLists.add(utilityOfItemsList, BorderLayout.EAST);
+
                 
                 addItemButton = new JButton("Add Item");
                 panelListButtons.add(addItemButton);
@@ -146,8 +138,6 @@ public class CreateBuyerAgentWindow extends Window{
                 nameOfItemsList.setModel(nameOfItemsModel);
                 utilityOfItemsModel = new DefaultListModel();
                 utilityOfItemsList.setModel(utilityOfItemsModel);
-                valueOfItemsModel = new DefaultListModel();
-                valueOfItemsList.setModel(valueOfItemsModel);
                 
                 setFrameOptions();
     }

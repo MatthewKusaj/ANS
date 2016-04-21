@@ -38,7 +38,6 @@ public class BuyerItemsGui extends Window{
     private JPanel infoPanel;
     private JPanel namePanel;
     private JPanel utilityPanel;
-    private JPanel valuePanel;
     private JPanel buttonsPanel;
     private JPanel negotiationStrategyPanel;
     private JPanel negotiationStrategyTopPanel;
@@ -52,7 +51,6 @@ public class BuyerItemsGui extends Window{
     private JLabel fillerLabel;
     private JLabel nameLabel;
     private JLabel utilityLabel;
-    private JLabel valueLabel;
     private JLabel negotiationStrategyLabel;
     private JLabel increasingValueLabel;
     private JLabel maximalPriceLabel;
@@ -61,7 +59,6 @@ public class BuyerItemsGui extends Window{
     
     public static JTextField nameText;
     private JTextField utilityText;
-    private JTextField valueText;
     public static JTextField increasingValueText;
     public static JTextField maximalPriceText;
     
@@ -92,16 +89,10 @@ public class BuyerItemsGui extends Window{
         utilityPanel.add(utilityLabel);
         utilityText = new JTextField(15);
         utilityPanel.add(utilityText);
-        valuePanel = new JPanel(new FlowLayout());
-        valueLabel = new JLabel("Value");
-        valuePanel.add(valueLabel);
-        valueText = new JTextField(15);
-        valuePanel.add(valueText);
         
         infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(namePanel, BorderLayout.NORTH);
         infoPanel.add(utilityPanel, BorderLayout.CENTER);
-        infoPanel.add(valuePanel, BorderLayout.SOUTH);
         
         buttonsPanel = new JPanel(new BorderLayout());
         acceptButton = new JButton("Accept");
@@ -133,7 +124,7 @@ public class BuyerItemsGui extends Window{
         maximalPricePanel.add(maximalPriceText);
         shareInformationPanel = new JPanel(new FlowLayout());
         shareInformationLabel = new JLabel("Share Information");
-        String[] shareInformationOptions = {"Don't share information","Always truth", "Always lie"};
+        String[] shareInformationOptions = {"Always share information", "Never share infromation"};
         shareInformationCB = new JComboBox(shareInformationOptions);
         negotiationStrategyPropertiesPanel.add(shareInformationPanel);
         shareInformationPanel.add(shareInformationLabel);
@@ -172,13 +163,11 @@ public class BuyerItemsGui extends Window{
             System.out.println(title);
             String utility = utilityText.getText().trim();
             System.out.println(utility);
-            String value = valueText.getText().trim();
             String option = (String) shareInformationCB.getSelectedItem();
             String truth = (String) truthCB.getSelectedItem();
-            System.out.println(value);
             properties = new ArrayList<>();
             properties.add(utility);
-            properties.add(value);
+            properties.add("0");
             
             myAgent.updateCatalogue(title, properties);
             
@@ -186,7 +175,6 @@ public class BuyerItemsGui extends Window{
             
             CreateBuyerAgentWindow.nameOfItemsModel.addElement(title);
             CreateBuyerAgentWindow.utilityOfItemsModel.addElement(utility);
-            CreateBuyerAgentWindow.valueOfItemsModel.addElement(value);
             
             if (increasingValueText.getText() == null){
                 properties.add("0");
@@ -205,7 +193,6 @@ public class BuyerItemsGui extends Window{
             
             nameText.setText(null);
             utilityText.setText(null);
-            valueText.setText(null);
             increasingValueText.setText(null);
             maximalPriceText.setText(null);
             

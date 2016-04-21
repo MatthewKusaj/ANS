@@ -202,7 +202,7 @@ public class SellerAgent extends Agent {
                                     }
                                     break;
                            }
-                                    }
+                                    }}
 				else {
 					// The requested book is NOT available for sale.
 					reply.setPerformative(ACLMessage.REFUSE);
@@ -215,7 +215,7 @@ public class SellerAgent extends Agent {
 			else {
 				block();
 			}
-		}
+		
 	}
         }// End of inner class OfferRequestsServer
 
