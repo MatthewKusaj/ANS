@@ -14,8 +14,11 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
+import static jade.tools.sniffer.Message.step;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public class SellerAgent extends Agent {
     
@@ -35,6 +38,8 @@ public class SellerAgent extends Agent {
         public SellerAgent myAgent;
         private int valueStart;
         private int valueEnd;
+        private MessageTemplate infoMT;
+        private Random randomGenerator;
 
         
 	// Put agent initializations here
@@ -107,6 +112,7 @@ public class SellerAgent extends Agent {
 	   sent back.
 	 */
 	private class OfferRequestsServer extends CyclicBehaviour {
+            private int stepInfo = 0;
                 @Override
 		public void action() {
 			MessageTemplate mt = MessageTemplate.MatchPerformative(ACLMessage.CFP);
@@ -145,11 +151,64 @@ public class SellerAgent extends Agent {
                                             price = newPriceInt;
                                             System.out.println("The price of the book " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
                                         }
+                                           ACLMessage info = new ACLMessage(ACLMessage.REQUEST);
+                            if (parameters.get(4) == "Always ask") {   
+//                                
+                                switch (stepInfo){
+                                    case 0:
+                                
+                                info.addReceiver(msg.getSender());
+                                info.setContent("What is your max value?");
+                                info.setConversationId("requesting-info");
+                                info.setReplyWith("info" + System.currentTimeMillis());
+                                myAgent.send(info);
+                                infoMT = MessageTemplate.and(MessageTemplate.MatchConversationId("requesting-info"), MessageTemplate.MatchInReplyTo(info.getReplyWith()));
+                               stepInfo = 1;
+                                          
+                                           
+                               break;
+                                   case 1:
+
+
+                                    ACLMessage replyInfo = myAgent.receive(infoMT);
+                                    if (replyInfo != null){
+                                    int information = Integer.valueOf(replyInfo.getContent());
+                                    if (parameters.get(5) == "Always trust"){
+                                        catalogueSeller.remove(title);
+                                        newPriceInt = information;
+                                        newPriceString = String.valueOf(newPriceInt);
+                                        parameters.set(1, newPriceString);
+                                        catalogueSeller.put(title, parameters);
+                                        price = newPriceInt;
+                                        System.out.println("The price of the item " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered to "+ price +" due to the trust in information provided ");
+                                    }if (parameters.get(5) == "Sometimes trust"){
+                                        randomGenerator = new Random();
+                                        int randomInt = randomGenerator.nextInt(9);
+                                        if (randomInt <= 4){
+                                            System.out.println("Agent " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "do not trust "  + msg.getSender().getName().replace("@192.168.0.11:1099/JADE", " ") + ". No actions have been taken");
+                                        }if (randomInt > 5){
+                                            catalogueSeller.remove(title);
+                                        newPriceInt = information;
+                                        newPriceString = String.valueOf(newPriceInt);
+                                        parameters.set(1, newPriceString);
+                                        catalogueSeller.put(title, parameters);
+                                        price = newPriceInt;
+                                        System.out.println("The price of the item " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered to "+ price +" due to the trust in information provided ");
+                                        }
+                                    }if (parameters.get(5) == "Never trust"){
+                                        System.out.println("Agent " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "do not trust "  + msg.getSender().getName().replace("@192.168.0.11:1099/JADE", " ") + ". No actions have been taken");
+                                    }
+                                    stepInfo = 2;
+                                    }
+                                    break;
+                           }
                                     }
 				else {
 					// The requested book is NOT available for sale.
 					reply.setPerformative(ACLMessage.REFUSE);
 					reply.setContent("not-available");
+                                        
+                             
 				}
 				myAgent.send(reply);
 			}
@@ -157,7 +216,8 @@ public class SellerAgent extends Agent {
 				block();
 			}
 		}
-	}  // End of inner class OfferRequestsServer
+	}
+        }// End of inner class OfferRequestsServer
 
 	/**
 	   Inner class PurchaseOrdersServer.
@@ -185,6 +245,7 @@ public class SellerAgent extends Agent {
 //                                valueEnd = parametersString.indexOf("v$");
 //                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
 //                                Integer price = Integer.valueOf(newparam);
+                                    
 				if (price != null) {
 					reply.setPerformative(ACLMessage.INFORM);
 					System.out.println(title+" sold to agent "+msg.getSender().getName().replace("@192.168.0.11:1099/JADE", " "));
@@ -195,16 +256,23 @@ public class SellerAgent extends Agent {
 					reply.setContent("not-available");
 				}
 				myAgent.send(reply);
+                                
+
 			}
 			else {
 				block();
 			}
+            
 		}
-	}  // End of inner class OfferRequestsServer
+                
+	} 
+        
+// End of inner class PurchaseOrdersServer
         public static SellerAgent getInstance() {
         return INSTANCE;
         }
         public SellerAgent getMyAgent(){
-        return myAgent;
+        return  myAgent;
         }
 }
+

@@ -49,6 +49,7 @@ public class SellerItemsGui extends Window{
     private JLabel loweringValueLabel;
     private JLabel minimalPriceLabel;
     private JLabel askInformationLabel;
+    private JLabel trustLabel;
     
     public static JTextField nameText;
     private JTextField utilityText;
@@ -57,6 +58,7 @@ public class SellerItemsGui extends Window{
     public static JTextField minimalPriceText;
     
     private JComboBox askInformationCB;
+    private JComboBox trustCB;
     
     private JButton acceptButton;
     private JButton cancelButton;
@@ -121,6 +123,7 @@ public class SellerItemsGui extends Window{
         negotiationStrategyPropertiesPanel.add(minimalPricePanel);
         minimalPricePanel.add(minimalPriceLabel);
         minimalPricePanel.add(minimalPriceText);
+        
         askInformationPanel = new JPanel(new FlowLayout());
         askInformationLabel = new JLabel("Ask for max price");
         String[] shareInformationOptions = {"Never ask","Always ask"};
@@ -128,6 +131,12 @@ public class SellerItemsGui extends Window{
         negotiationStrategyPropertiesPanel.add(askInformationPanel);
         askInformationPanel.add(askInformationLabel);
         askInformationPanel.add(askInformationCB);
+        trustLabel = new JLabel("Level of trust");
+        String[] trustLevel = {"Always trust", "Sometimes trust", "Never trust"};
+        trustCB = new JComboBox(trustLevel);
+        askInformationPanel.add(trustLabel);
+        askInformationPanel.add(trustCB);
+        
         
         panel = new JPanel(new BorderLayout());
         panel.add(infoPanel, BorderLayout.NORTH);
@@ -149,6 +158,7 @@ public class SellerItemsGui extends Window{
             String utility = utilityText.getText().trim();
             String value = valueText.getText().trim();
             String option = (String) askInformationCB.getSelectedItem();
+            String trust = (String) trustCB.getSelectedItem();
             properties = new ArrayList<>();
             properties.add(utility);
             properties.add(value);
@@ -173,6 +183,7 @@ public class SellerItemsGui extends Window{
                 properties.add(Minimal_Price.addMinimalPrice());
             }
             properties.add(option);
+            properties.add(trust);
             
             nameText.setText(null);
             utilityText.setText(null);

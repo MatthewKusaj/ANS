@@ -161,6 +161,27 @@ public class BuyerAgent extends Agent {
                                 }
                                         
 					repliesCnt++;
+                                        ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
+                                        MessageTemplate infoTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
+                                        ACLMessage msgInfo = myAgent.receive(infoTemplate);
+                                        if (msgInfo != null){
+                                        ACLMessage replyInfo = msgInfo.createReply();
+                                        replyInfo.addReceiver(reply.getSender());
+                                            if (msgInfo != null){
+                                                String info = msgInfo.getContent();
+                                                System.out.println(info);
+                                                replyInfo.setPerformative(ACLMessage.INFORM);
+                                                if ("Always truth".equals(parameters.get(4).toString())){
+                                                replyInfo.setContent(parameters.get(3).toString());
+                                                }if ("Always lie".equals(parameters.get(4).toString())){
+                                                String falseInfoS = parameters.get(3).toString();
+                                                int falseInfoI = Integer.valueOf(falseInfoS);
+                                                int newFalseInfoI = falseInfoI - 100;
+                                                replyInfo.setContent(Integer.toString(newFalseInfoI));
+                                            }
+                                                myAgent.send(replyInfo);
+                                                
+                                            }}
 					if (repliesCnt >= sellerAgents.length) {
 						// We received all replies
 						step = 2; 

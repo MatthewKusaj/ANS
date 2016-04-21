@@ -57,6 +57,7 @@ public class BuyerItemsGui extends Window{
     private JLabel increasingValueLabel;
     private JLabel maximalPriceLabel;
     private JLabel shareInformationLabel;
+    private JLabel truthLabel;
     
     public static JTextField nameText;
     private JTextField utilityText;
@@ -65,6 +66,7 @@ public class BuyerItemsGui extends Window{
     public static JTextField maximalPriceText;
     
     private JComboBox shareInformationCB;
+    private JComboBox truthCB;
     
     private JButton acceptButton;
     private JButton cancelButton;
@@ -136,6 +138,11 @@ public class BuyerItemsGui extends Window{
         negotiationStrategyPropertiesPanel.add(shareInformationPanel);
         shareInformationPanel.add(shareInformationLabel);
         shareInformationPanel.add(shareInformationCB);
+        truthLabel = new JLabel("How honest should I be?");
+        String[] truthValue = {"Always truth", "Sometimes truth", "Always lie"};
+        truthCB = new JComboBox(truthValue);
+        shareInformationPanel.add(truthLabel);
+        shareInformationPanel.add(truthCB);
         
         panel = new JPanel(new BorderLayout());
         panel.add(infoPanel, BorderLayout.NORTH);
@@ -167,6 +174,7 @@ public class BuyerItemsGui extends Window{
             System.out.println(utility);
             String value = valueText.getText().trim();
             String option = (String) shareInformationCB.getSelectedItem();
+            String truth = (String) truthCB.getSelectedItem();
             System.out.println(value);
             properties = new ArrayList<>();
             properties.add(utility);
@@ -191,6 +199,7 @@ public class BuyerItemsGui extends Window{
                 properties.add(Maximal_Price.addMaximalPrice());
             }
             properties.add(option);
+            properties.add(truth);
             System.out.println(properties);
               
             
