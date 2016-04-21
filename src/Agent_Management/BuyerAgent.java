@@ -42,7 +42,7 @@ public class BuyerAgent extends Agent {
         private Random randomGenerator;
         
         public BuyerAgent(){
-            //myGui = new BuyerItemsGui("Create new Iem", 500, 300, this);
+            
         }
 
 	// Put agent initializations here
