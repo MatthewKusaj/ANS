@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import Agent_Management.BuyerAgent;
@@ -19,7 +14,7 @@ import javax.swing.border.Border;
 /**
  * Abstract class to create a generic window
  *
- * @author Matthew
+ * @author Mateusz Kusaj
  */
 public abstract class Window implements ActionListener{
 	

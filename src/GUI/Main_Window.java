@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import Agent_Management.ContainersManager;
@@ -23,7 +18,7 @@ import javax.swing.WindowConstants;
 
 /**
  *
- * @author Matthew
+ * @author Mateusz Kusaj
  */
 public class Main_Window extends Window{
     
@@ -38,7 +33,6 @@ public class Main_Window extends Window{
     private JButton runSimulation;
     private JButton newBuyerAgent;
     private JButton newSellerAgent;
-    private JButton editAgent;
     private JButton deleteAgent;
 
     private JList<String> buyerAgentsList;
@@ -75,8 +69,6 @@ public class Main_Window extends Window{
                 southPanel.add(newBuyerAgent);
                 newSellerAgent = new JButton("Create Seller Agent");
                 southPanel.add(newSellerAgent);
-                editAgent = new JButton("Edit Agent");
-                southPanel.add(editAgent);
                 deleteAgent = new JButton("Delete Agent");
                 southPanel.add(deleteAgent);
                 
@@ -91,6 +83,7 @@ public class Main_Window extends Window{
 		newBuyerAgent.addActionListener(this);
                 newSellerAgent.addActionListener(this);
                 runSimulation.addActionListener(this);
+                deleteAgent.addActionListener(this);
                 
                 buyerAgentsListModel = new DefaultListModel();
                 buyerAgentsList.setModel(buyerAgentsListModel);
@@ -102,14 +95,15 @@ public class Main_Window extends Window{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(newBuyerAgent)){
+            // Opens new window that can be used to create new Buyer Agent
             new CreateBuyerAgentWindow("Create New Buyer Agent", 800, 800);
         }
         if(e.getSource().equals(newSellerAgent)){
+            //Opens new window that can be used to create new Seller Agent
             new CreateSellerAgentWindow("Create New Seller Agent", 800, 800);
         }
         if(e.getSource().equals(runSimulation)){
-//            newBuyerAgent.runBuyer();
-//            new TickerCheckerBuyer();
+            //Runs the similation with selected Buyer agent
             selectedAgent = buyerAgentsList.getSelectedValue();
             ContainerController myContainer = ContainersManager.getInstance().getBuyerContainer();
             try {
@@ -119,6 +113,31 @@ public class Main_Window extends Window{
                 Logger.getLogger(Main_Window.class.getName()).log(Level.SEVERE, null, ex);
             }
            
+        }
+        if(e.getSource().equals(deleteAgent)){
+            //Removes selected agent from the list and from the container
+          if (buyerAgentsList.getSelectedValue() != null){
+              selectedAgent = buyerAgentsList.getSelectedValue();
+              ContainerController myContainer = ContainersManager.getInstance().getBuyerContainer();
+            try {
+                AgentController ac = myContainer.getAgent(selectedAgent + "@192.168.0.13:1099/JADE", true);
+                ac.kill();
+            } catch (ControllerException ex) {
+                Logger.getLogger(Main_Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            buyerAgentsListModel.remove(buyerAgentsList.getSelectedIndex());
+          }if(sellerAgentsList.getSelectedValue() != null){
+                   selectedAgent = sellerAgentsList.getSelectedValue();
+              ContainerController myContainer = ContainersManager.getInstance().getSellerContainer();
+            try {
+                AgentController ac = myContainer.getAgent(selectedAgent + "@192.168.0.13:1099/JADE", true);
+                ac.kill();
+            } catch (ControllerException ex) {
+                Logger.getLogger(Main_Window.class.getName()).log(Level.SEVERE, null, ex);
+            }
+            sellerAgentsListModel.remove(sellerAgentsList.getSelectedIndex());
+              
+          }
         }
     }
     

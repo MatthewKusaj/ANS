@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import Agent_Management.BuyerAgent;
@@ -28,7 +23,7 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author Matthew
+ * @author Mateusz Kusaj
  */
 public class BuyerItemsGui extends Window{
     
@@ -37,7 +32,6 @@ public class BuyerItemsGui extends Window{
     private JPanel panel;
     private JPanel infoPanel;
     private JPanel namePanel;
-    private JPanel utilityPanel;
     private JPanel buttonsPanel;
     private JPanel negotiationStrategyPanel;
     private JPanel negotiationStrategyTopPanel;
@@ -50,7 +44,6 @@ public class BuyerItemsGui extends Window{
     
     private JLabel fillerLabel;
     private JLabel nameLabel;
-    private JLabel utilityLabel;
     private JLabel negotiationStrategyLabel;
     private JLabel increasingValueLabel;
     private JLabel maximalPriceLabel;
@@ -58,7 +51,6 @@ public class BuyerItemsGui extends Window{
     private JLabel truthLabel;
     
     public static JTextField nameText;
-    private JTextField utilityText;
     public static JTextField increasingValueText;
     public static JTextField maximalPriceText;
     
@@ -77,6 +69,7 @@ public class BuyerItemsGui extends Window{
     }
 
     private void initiWidgets() {
+        //Creates all widgets and the entire layout
         getWindow().setResizable(false);
         
         namePanel = new JPanel(new FlowLayout());
@@ -84,15 +77,10 @@ public class BuyerItemsGui extends Window{
         namePanel.add(nameLabel);
         nameText = new JTextField(15);
         namePanel.add(nameText);
-        utilityPanel = new JPanel(new FlowLayout());
-        utilityLabel = new JLabel("Utility");
-        utilityPanel.add(utilityLabel);
-        utilityText = new JTextField(15);
-        utilityPanel.add(utilityText);
+
         
         infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(namePanel, BorderLayout.NORTH);
-        infoPanel.add(utilityPanel, BorderLayout.CENTER);
         
         buttonsPanel = new JPanel(new BorderLayout());
         acceptButton = new JButton("Accept");
@@ -124,7 +112,7 @@ public class BuyerItemsGui extends Window{
         maximalPricePanel.add(maximalPriceText);
         shareInformationPanel = new JPanel(new FlowLayout());
         shareInformationLabel = new JLabel("Share Information");
-        String[] shareInformationOptions = {"Always share information", "Never share infromation"};
+        String[] shareInformationOptions = {"Never share infromation","Always share information" };
         shareInformationCB = new JComboBox(shareInformationOptions);
         negotiationStrategyPropertiesPanel.add(shareInformationPanel);
         shareInformationPanel.add(shareInformationLabel);
@@ -161,12 +149,11 @@ public class BuyerItemsGui extends Window{
             try{
             String title = nameText.getText().trim();
             System.out.println(title);
-            String utility = utilityText.getText().trim();
-            System.out.println(utility);
+
             String option = (String) shareInformationCB.getSelectedItem();
             String truth = (String) truthCB.getSelectedItem();
             properties = new ArrayList<>();
-            properties.add(utility);
+            properties.add("0");
             properties.add("0");
             
             myAgent.updateCatalogue(title, properties);
@@ -174,7 +161,6 @@ public class BuyerItemsGui extends Window{
             
             
             CreateBuyerAgentWindow.nameOfItemsModel.addElement(title);
-            CreateBuyerAgentWindow.utilityOfItemsModel.addElement(utility);
             
             if (increasingValueText.getText() == null){
                 properties.add("0");
@@ -192,7 +178,6 @@ public class BuyerItemsGui extends Window{
               
             
             nameText.setText(null);
-            utilityText.setText(null);
             increasingValueText.setText(null);
             maximalPriceText.setText(null);
             

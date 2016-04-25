@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package Agent_Management;
 
 import GUI.SellerItemsGui;
@@ -14,12 +9,13 @@ import jade.domain.DFService;
 import jade.domain.FIPAException;
 import jade.domain.FIPAAgentManagement.DFAgentDescription;
 import jade.domain.FIPAAgentManagement.ServiceDescription;
-import static jade.tools.sniffer.Message.step;
 
 import java.util.*;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
+/**
+ *
+ * @author Mateusz Kusaj
+ */
 public class SellerAgent extends Agent {
     
         private static final SellerAgent INSTANCE = new SellerAgent();
@@ -36,8 +32,7 @@ public class SellerAgent extends Agent {
         private String minimalPriceS;
         private int minimalPriceI;
         public SellerAgent myAgent;
-        private int valueStart;
-        private int valueEnd;
+
         private MessageTemplate infoMT;
         private Random randomGenerator;
 
@@ -122,19 +117,13 @@ public class SellerAgent extends Agent {
 				String title = msg.getContent();
 				ACLMessage reply = msg.createReply();
 
-                                //if(catalogueSeller.get(title) != null){
+
                                 ArrayList parameters =  (ArrayList) catalogueSeller.get(title);
-                                System.out.println(catalogueSeller.get(title));
                                 Integer price = Integer.valueOf(parameters.get(1).toString());
-//				String parametersString = catalogueSeller.get(title).toString();
-//                                valueStart = parametersString.indexOf("$v");
-//                                valueEnd = parametersString.indexOf("v$");
-//                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
-//                                Integer price = Integer.valueOf(newparam);
+
                                 minimalPriceS = parameters.get(3).toString();
                                 minimalPriceI = Integer.valueOf(minimalPriceS);
                                 if(catalogueSeller.get(title) != null && price >= minimalPriceI){
-//				if (price != null) {
 					// The requested book is available for sale. Reply with the price
 					reply.setPerformative(ACLMessage.PROPOSE);
 					reply.setContent(String.valueOf(price));
@@ -146,14 +135,14 @@ public class SellerAgent extends Agent {
                                             newPriceInt = price - loweringNumberI;
                                             newPriceString = String.valueOf(newPriceInt);
                                             parameters.set(1, newPriceString);
-//                                        parameters.set(1, "$v" + newPriceString + "v$");
+
                                             catalogueSeller.put(title, parameters);
                                             price = newPriceInt;
                                             System.out.println("The price of the book " + title + " selling by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been lowered by "+ loweringNumberI +" to a new price which is " + price);
                                         }
                                            ACLMessage info = new ACLMessage(ACLMessage.REQUEST);
                             if (parameters.get(4) == "Always ask") {   
-//                                
+     
                                 switch (stepInfo){
                                     case 0:
                                 
@@ -240,11 +229,6 @@ public class SellerAgent extends Agent {
                                 ArrayList parameters =  (ArrayList) catalogueSeller.get(title);
                                 System.out.println(catalogueSeller.get(title));
                                 Integer price = Integer.valueOf(parameters.get(1).toString());
-//				String parametersString = catalogueSeller.remove(title).toString();
-//                                valueStart = parametersString.indexOf("$v");
-//                                valueEnd = parametersString.indexOf("v$");
-//                                String newparam = parametersString.substring(valueStart + 2, valueEnd);
-//                                Integer price = Integer.valueOf(newparam);
                                     
 				if (price != null) {
 					reply.setPerformative(ACLMessage.INFORM);

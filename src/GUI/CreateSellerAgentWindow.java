@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import Agent_Management.ContainersManager;
@@ -20,12 +15,11 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 /**
  *
- * @author Matthew
+ * @author Mateusz Kusaj
  */
 public class CreateSellerAgentWindow extends Window{
    
     ContainerController myContainer;
-    //public  String SECONDARY_PROPERTIES_FILE = "cfg/containerServer.cfg"; 
     
     private String agentName;
     private String loweringValue;
@@ -44,21 +38,17 @@ public class CreateSellerAgentWindow extends Window{
     private JLabel nameLabel;
     private JLabel listOfItemsLabel;
     private JLabel nameItemLabel;
-    private JLabel utilityItemLabel;
     private JLabel valueItemLabel;
     
     private JTextField nameText;
     
     private JButton addItemButton;
-    private JButton editItemButton;
     private JButton deleteItemButton;
     private JButton acceptButton;
     private JButton cancelButton;
     
     private JList<String> nameOfItemsList;
     public static DefaultListModel nameOfItemsModel;
-    private JList<String> utilityOfItemsList;
-    public static DefaultListModel utilityOfItemsModel;
     private JList<String> valueOfItemsList;
     public static DefaultListModel valueOfItemsModel;
     
@@ -73,7 +63,7 @@ public class CreateSellerAgentWindow extends Window{
                 initiWidgets();
         }
     private void initiWidgets(){
-        // Create panel for widgets and layout
+        //Creates all widgets and the entire layout
 		getWindow().setResizable(false);
                 
                 panelName = new JPanel(new FlowLayout());
@@ -102,8 +92,6 @@ public class CreateSellerAgentWindow extends Window{
                 panelColumnNames.add(nameItemLabel);
                 fillerLabel = new JLabel("          ");
                 panelColumnNames.add(fillerLabel);
-                utilityItemLabel = new JLabel("Utility");
-                panelColumnNames.add(utilityItemLabel);
                 fillerLabel = new JLabel("          ");
                 panelColumnNames.add(fillerLabel);
                 valueItemLabel = new JLabel("Value");
@@ -111,8 +99,6 @@ public class CreateSellerAgentWindow extends Window{
                 
                 nameOfItemsList = new JList<>();
                 panelLists.add(nameOfItemsList, BorderLayout.WEST);
-                utilityOfItemsList = new JList<>();
-                panelLists.add(utilityOfItemsList, BorderLayout.CENTER);
                 valueOfItemsList = new JList<>();
                 panelLists.add(valueOfItemsList, BorderLayout.EAST);
                 
@@ -120,8 +106,6 @@ public class CreateSellerAgentWindow extends Window{
                 panelListButtons.add(addItemButton);
                 fillerLabel = new JLabel("          ");
                 panelListButtons.add(fillerLabel);
-                editItemButton = new JButton("Edit Item");
-                panelListButtons.add(editItemButton);
                 fillerLabel = new JLabel("          ");
                 panelListButtons.add(fillerLabel);
                 deleteItemButton = new JButton("Delete Item");
@@ -141,11 +125,11 @@ public class CreateSellerAgentWindow extends Window{
                 
                 acceptButton.addActionListener(this);
                 addItemButton.addActionListener(this);
+                cancelButton.addActionListener(this);
+                deleteItemButton.addActionListener(this);
                 
                 nameOfItemsModel = new DefaultListModel();
                 nameOfItemsList.setModel(nameOfItemsModel);
-                utilityOfItemsModel = new DefaultListModel();
-                utilityOfItemsList.setModel(utilityOfItemsModel);
                 valueOfItemsModel = new DefaultListModel();
                 valueOfItemsList.setModel(valueOfItemsModel);
                 
@@ -155,6 +139,7 @@ public class CreateSellerAgentWindow extends Window{
     @Override
     public void actionPerformed(ActionEvent e) {
         if(e.getSource().equals(addItemButton)){
+            //Opens a new window that can be used to create new item that wil be added to the catalogue of this particular agent
                 agentName = nameText.getText();
                 args = new Object[1];
                 args[0] = null;
@@ -164,20 +149,34 @@ public class CreateSellerAgentWindow extends Window{
                         ContainersManager.getInstance().createSellerContainer();
                     }
                     myContainer = ContainersManager.getInstance().getSellerContainer();
-                    
-                    //if( newSellerAgent.getAID().getName() == agentName){
 
                         AgentController ac = myContainer.createNewAgent(agentName, "Agent_Management.SellerAgent", args);
                         ac.start();
-                //}
-                        
                     }   catch(Exception ex) {
 		}
         }
         if(e.getSource().equals(acceptButton)){        
-            
+            //implements the agent and add him to the list on the Main Window
             Main_Window.sellerAgentsListModel.addElement(agentName);
             getWindow().dispose();
+        }
+         if(e.getSource().equals(cancelButton)){
+             //Kills the agent and returns to the Main Window
+            agentName = nameText.getText();
+    
+		try{
+                    myContainer = ContainersManager.getInstance().getSellerContainer();
+
+                        AgentController ac = myContainer.getAgent(agentName + "@192.168.0.13:1099/JADE", true);
+                        ac.kill();
+                        
+                    }   catch(Exception ex) {
+		}
+                getWindow().dispose();
+        }
+        if(e.getSource().equals(deleteItemButton)){
+            //selectedItem = nameOfItemsList.getSelectedValue();
+            
         }
     }       
 }

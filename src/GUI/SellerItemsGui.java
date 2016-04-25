@@ -1,8 +1,3 @@
-/*
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
 package GUI;
 
 import Agent_Management.SellerAgent;
@@ -22,14 +17,13 @@ import javax.swing.JTextField;
 
 /**
  *
- * @author Matthew
+ * @author Mateusz Kusaj
  */
 public class SellerItemsGui extends Window{
     
     private JPanel panel;
     private JPanel infoPanel;
     private JPanel namePanel;
-    private JPanel utilityPanel;
     private JPanel valuePanel;
     private JPanel buttonsPanel;
     private JPanel negotiationStrategyPanel;
@@ -43,7 +37,6 @@ public class SellerItemsGui extends Window{
     
     private JLabel fillerLabel;
     private JLabel nameLabel;
-    private JLabel utilityLabel;
     private JLabel valueLabel;
     private JLabel negotiationStrategyLabel;
     private JLabel loweringValueLabel;
@@ -52,7 +45,6 @@ public class SellerItemsGui extends Window{
     private JLabel trustLabel;
     
     public static JTextField nameText;
-    private JTextField utilityText;
     private JTextField valueText;
     public static JTextField loweringValueText;
     public static JTextField minimalPriceText;
@@ -79,11 +71,6 @@ public class SellerItemsGui extends Window{
         namePanel.add(nameLabel);
         nameText = new JTextField(15);
         namePanel.add(nameText);
-        utilityPanel = new JPanel(new FlowLayout());
-        utilityLabel = new JLabel("Utility");
-        utilityPanel.add(utilityLabel);
-        utilityText = new JTextField(15);
-        utilityPanel.add(utilityText);
         valuePanel = new JPanel(new FlowLayout());
         valueLabel = new JLabel("Value");
         valuePanel.add(valueLabel);
@@ -92,7 +79,6 @@ public class SellerItemsGui extends Window{
         
         infoPanel = new JPanel(new BorderLayout());
         infoPanel.add(namePanel, BorderLayout.NORTH);
-        infoPanel.add(utilityPanel, BorderLayout.CENTER);
         infoPanel.add(valuePanel, BorderLayout.SOUTH);
         
         buttonsPanel = new JPanel(new BorderLayout());
@@ -112,7 +98,7 @@ public class SellerItemsGui extends Window{
         negotiationStrategyPropertiesPanel = new JPanel(new GridLayout(2,4));
         negotiationStrategyPanel.add(negotiationStrategyPropertiesPanel, BorderLayout.CENTER);
         loweringValuePanel = new JPanel (new FlowLayout());
-        loweringValueLabel = new JLabel("Reduction value");
+        loweringValueLabel = new JLabel("Decreasing value");
         loweringValueText = new JTextField(20);
         negotiationStrategyPropertiesPanel.add(loweringValuePanel);
         loweringValuePanel.add(loweringValueLabel);
@@ -155,12 +141,11 @@ public class SellerItemsGui extends Window{
         if(e.getSource().equals(acceptButton)){
             try{
             String title = nameText.getText().trim();
-            String utility = utilityText.getText().trim();
             String value = valueText.getText().trim();
             String option = (String) askInformationCB.getSelectedItem();
             String trust = (String) trustCB.getSelectedItem();
             properties = new ArrayList<>();
-            properties.add(utility);
+            properties.add("0");
             properties.add(value);
             
             
@@ -169,7 +154,6 @@ public class SellerItemsGui extends Window{
             
             
             CreateSellerAgentWindow.nameOfItemsModel.addElement(title);
-            CreateSellerAgentWindow.utilityOfItemsModel.addElement(utility);
             CreateSellerAgentWindow.valueOfItemsModel.addElement(value);
             
             if (loweringValueText.getText() == null){
@@ -186,7 +170,6 @@ public class SellerItemsGui extends Window{
             properties.add(trust);
             
             nameText.setText(null);
-            utilityText.setText(null);
             valueText.setText(null);
             loweringValueText.setText(null);
             minimalPriceText.setText(null);

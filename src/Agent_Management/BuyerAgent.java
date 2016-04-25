@@ -1,7 +1,6 @@
 package Agent_Management;
 
 import GUI.BuyerItemsGui;
-import GUI.SellerItemsGui;
 import jade.core.Agent;
 import jade.core.AID;
 import jade.core.behaviours.*;
@@ -15,6 +14,10 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
 
+/**
+ *
+ * @author Mateusz Kusaj
+ */
 public class BuyerAgent extends Agent {
     
         private static final BuyerAgent INSTANCE = new BuyerAgent();
@@ -24,9 +27,9 @@ public class BuyerAgent extends Agent {
         private BuyerItemsGui myGui;
         private String title;
         // Information about the book buyer is interested to obtain
-        private static String targetBook;
+        private static String targetItem;
 	// The title of the book to buy
-	public static String targetBookTitle;
+	public static String targetItemTitle;
         // The separator which will tell agent where is the price is "/" currently
         private int separator;
         // The maximum price the buyer is willing to pay
@@ -68,7 +71,7 @@ public class BuyerAgent extends Agent {
                                 @Override
 				protected void onTick() {
                                     setParameters();
-					System.out.println("Trying to buy "+targetBookTitle);
+					System.out.println("Trying to buy "+targetItemTitle);
 					// Update the list of seller agents
 					DFAgentDescription template = new DFAgentDescription();
 					ServiceDescription sd = new ServiceDescription();
@@ -122,7 +125,7 @@ public class BuyerAgent extends Agent {
 				for (int i = 0; i < sellerAgents.length; ++i) {
 					cfp.addReceiver(sellerAgents[i]);
 				} 
-				cfp.setContent(targetBookTitle);
+				cfp.setContent(targetItemTitle);
 				cfp.setConversationId("book-trade");
 				cfp.setReplyWith("cfp"+System.currentTimeMillis()); // Unique value
 				myAgent.send(cfp);
@@ -146,7 +149,7 @@ public class BuyerAgent extends Agent {
 							bestSeller = reply.getSender();
                                                         
 						}
-					ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
+					ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetItemTitle);
                                              increasingNumberS = (String) parameters.get(2);
                                           price = Integer.valueOf(parameters.get(3).toString());
                                         if(!"0".equals(increasingNumberS)){
@@ -155,16 +158,15 @@ public class BuyerAgent extends Agent {
                                             newPriceInt = price + increasingNumber;
                                             newPriceString = String.valueOf(newPriceInt);
                                             parameters.set(3, newPriceString);
-//                                        parameters.set(1, "$v" + newPriceString + "v$");
-                                            catalogueBuyer.put(targetBookTitle, parameters);
+                                            catalogueBuyer.put(targetItemTitle, parameters);
                                             price = newPriceInt;
-                                            System.out.println("The  maximal price of the item " + targetBookTitle + " buying by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been increased by "+ increasingNumber +" to a new price which is " + price);
+                                            System.out.println("The  maximal price of the item " + targetItemTitle + " buying by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + "has been increased by "+ increasingNumber +" to a new price which is " + price);
                                         }
                                     
                                 }
                                         
 					repliesCnt++;
-                                        ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
+                                        ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetItemTitle);
                                         MessageTemplate infoTemplate = MessageTemplate.MatchPerformative(ACLMessage.REQUEST);
                                         ACLMessage msgInfo = myAgent.receive(infoTemplate);
                                         if (msgInfo != null){
@@ -214,7 +216,7 @@ public class BuyerAgent extends Agent {
 				// Send the purchase order to the seller that provided the best offer
 				ACLMessage order = new ACLMessage(ACLMessage.ACCEPT_PROPOSAL);
 				order.addReceiver(bestSeller);
-				order.setContent(targetBookTitle);
+				order.setContent(targetItemTitle);
 				order.setConversationId("book-trade");
 				order.setReplyWith("order"+System.currentTimeMillis());
 				myAgent.send(order);
@@ -230,7 +232,7 @@ public class BuyerAgent extends Agent {
 					// Purchase order reply received
 					if (reply.getPerformative() == ACLMessage.INFORM) {
 						// Purchase successful. We can terminate
-						System.out.println(targetBookTitle+" successfully purchased from agent "+reply.getSender().getName().replace("@192.168.0.11:1099/JADE", " "));
+						System.out.println(targetItemTitle+" successfully purchased from agent "+reply.getSender().getName().replace("@192.168.0.11:1099/JADE", " "));
 						System.out.println("Price = "+bestPrice);
 						myAgent.doDelete();
 					}
@@ -250,7 +252,7 @@ public class BuyerAgent extends Agent {
                 @Override
 		public boolean done() {
 			if (step == 2 && bestSeller == null) {
-				System.out.println("Attempt failed: "+targetBookTitle+" not available for sale");
+				System.out.println("Attempt failed: "+targetItemTitle+" not available for sale");
 			}
 			return ((step == 2 && bestSeller == null) || step == 4);
 		}
@@ -261,7 +263,7 @@ public class BuyerAgent extends Agent {
                         @Override
 			public void action() {
 				catalogueBuyer.put(title, parameters);
-				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") + " Utility = "+parameters.get(0) + " Maximal Price = "+ parameters.get(3));
+				System.out.println(title+" inserted into catalogue by " + getAID().getName().replace("@192.168.0.11:1099/JADE", " ") +  " Maximal Price = "+ parameters.get(3));
                                 
                         }
 		} );
@@ -278,19 +280,15 @@ public class BuyerAgent extends Agent {
         public void setParameters(){
             
 
-//        @Override
-//        public void action() {
-            targetBook = catalogueBuyer.toString();
-            separator = targetBook.indexOf("=");
-            targetBookTitle = targetBook.substring(1,(separator));
-            ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetBookTitle);
-            System.out.println(catalogueBuyer.get(targetBookTitle));
-            //Integer price = Integer.valueOf(parameters.get(1).toString());
+            targetItem = catalogueBuyer.toString();
+            separator = targetItem.indexOf("=");
+            targetItemTitle = targetItem.substring(1,(separator));
+            ArrayList parameters =  (ArrayList) catalogueBuyer.get(targetItemTitle);
 		if (parameters.isEmpty() == false) {
 			
                         maxPriceS = parameters.get(3).toString();
                         maxPriceI = Integer.valueOf(maxPriceS);
-			System.out.println("Target book is "+targetBookTitle + " and its max price is " + maxPriceI);
+			System.out.println("Target item is "+targetItemTitle + " and its max price is " + maxPriceI);
                 }	else {
 			// Make the agent terminate
 			System.out.println("No target book title specified");
@@ -303,7 +301,7 @@ public class BuyerAgent extends Agent {
                                 @Override
 				protected void onTick() {
                                     setParameters();
-					System.out.println("Trying to buy "+targetBookTitle);
+					System.out.println("Trying to buy "+targetItemTitle);
 					// Update the list of seller agents
 					DFAgentDescription template = new DFAgentDescription();
 					ServiceDescription sd = new ServiceDescription();
@@ -321,7 +319,6 @@ public class BuyerAgent extends Agent {
 					catch (FIPAException fe) {
 					}
 
-					// Perform the request
 					myAgent.addBehaviour(new RequestPerformer());
 				}
 			} );
